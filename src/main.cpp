@@ -7,6 +7,7 @@ void setup()
 {
   api::setup();
   hall::setup([](){});
+  motor::setup();
 }
 
 void loop()
