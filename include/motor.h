@@ -2,6 +2,7 @@
 #ifndef MOTOR_H
 #define MOTOR_H
 
+#include <Arduino.h>
 namespace motor 
 {
     int PWMA = 3;

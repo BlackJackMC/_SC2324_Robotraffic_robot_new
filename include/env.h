@@ -1,4 +1,6 @@
 #define SSID ""
 #define PASS ""
-#define URL ""
-#define PORT 30
+#define HTTP_URL ""
+#define HTTP_PORT 443
+#define MQTT_URL ""
+#define MQTT_PORT 8883
