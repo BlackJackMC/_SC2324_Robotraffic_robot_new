@@ -11,7 +11,7 @@ namespace line
 
     const int count = 5;
     const uint8_t pin[] = {9, 10, 11, 12, 13};
-    int value[5];
+    uint16_t value[5];
 
     void setup()
     {

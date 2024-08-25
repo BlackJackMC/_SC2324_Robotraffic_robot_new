@@ -5,15 +5,16 @@
 #include <WiFiClient.h>
 #include <ArduinoHttpClient.h>
 #include "env.h"
+#include "net.h"
 
 namespace api
 {
     // Manually added empty constructor, please DO NOT ABUSE
     HttpClient client;
 
-    void setup(WiFiClient &wifi)
+    void setup()
     {
-        client = HttpClient(wifi, HTTP_URL, HTTP_PORT);
+        client = HttpClient(net::wifi, HTTP_URL, HTTP_PORT);
     }
 }
 

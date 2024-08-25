@@ -1,10 +1,10 @@
-#ifndef WHEEL_H
-#define WHEEL_H
+#ifndef STEERING_H
+#define STEERING_H
 
 #include <Arduino.h>
 #include <Servo.h>
 
-namespace wheel
+namespace steering
 {
     const int pin = 7;
     bool enabled = false;

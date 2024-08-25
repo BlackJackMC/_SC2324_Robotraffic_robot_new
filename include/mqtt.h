@@ -8,7 +8,9 @@
 #include <Arduino.h>
 #include <WiFiClient.h>
 #include <PubSubClient.h>
+
 #include "env.h"
+#include "net.h"
 
 namespace mqtt
 {
@@ -26,9 +28,9 @@ namespace mqtt
 
     void on(String event, callback_t f) { callback[event] = f; }
 
-    void setup(WiFiClient &wifi)
+    void setup()
     {
-        client.setClient(wifi);
+        client.setClient(net::wifi);
         client.setServer(MQTT_URL, MQTT_PORT);
         client.setCallback(handler);
         enabled = true;

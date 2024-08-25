@@ -19,9 +19,11 @@ namespace motor
         enabled = true;
     }
 
+    void stop() {analogWrite(PWMA, 0);}
+
     void shutdown()
     {
-        analogWrite(PWMA, 0);
+        stop();
         enabled = false;
     }
 
