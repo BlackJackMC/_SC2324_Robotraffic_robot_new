@@ -8,6 +8,7 @@
 #include "hall.h"
 #include "motor.h"
 #include "line.h"
+#include "wheel.h"
 
 namespace car
 {
@@ -43,6 +44,16 @@ namespace car
             mqtt::client.publish("control/line", String(line::enabled).c_str());
         });
 
+        mqtt::on("control/wheel", [&](String message)
+        {
+            if (message == "setup")
+                wheel::setup();
+            else
+                wheel::shutdown();
+
+            mqtt::client.publish("control/wheel", String(wheel::enabled).c_str());
+        });
+
         Serial.println("Waiting for setup command");
     }
 
@@ -51,6 +62,8 @@ namespace car
         hall::setup([](){});
         motor::setup();
         line::setup();
+        wheel::setup();
+        mqtt::client.publish("control/wheel", String(wheel::enabled).c_str());
         mqtt::client.publish("control/hall", String(hall::enabled).c_str());
         mqtt::client.publish("control/motor", String(motor::enabled).c_str());
         mqtt::client.publish("control/line", String(line::enabled).c_str());

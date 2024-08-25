@@ -6,8 +6,8 @@
 namespace motor 
 {
     int PWMA = 3;
-    int AIN1 = 2;
-    int AIN2 = 4;
+    int AIN1 = 4;
+    int AIN2 = 6;
     int speed = 0;
     bool enabled = false; //For debugging
 
