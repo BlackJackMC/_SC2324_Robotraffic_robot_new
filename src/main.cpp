@@ -14,9 +14,12 @@ void setup()
   net::setup();
   api::setup(net::wifi);
   mqtt::setup(net::wifi);
-  hall::setup([](){});
-  motor::setup();
-  line::setup();
+  mqtt::on("control/hall", [&](String message){hall::setup([](){}); });
+
+
+  // hall::setup([](){});
+  // motor::setup();
+  // line::setup();
 }
 
 void loop()

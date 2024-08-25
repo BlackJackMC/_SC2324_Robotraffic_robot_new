@@ -8,6 +8,7 @@
 
 namespace api
 {
+    // Manually added empty constructor, please DO NOT ABUSE
     HttpClient client;
 
     void setup(WiFiClient &wifi)

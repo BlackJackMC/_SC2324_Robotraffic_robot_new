@@ -3,6 +3,7 @@
 
 #include <Wifi.h>
 #include <WiFiClient.h>
+#include "env.h"
 
 namespace net
 {
