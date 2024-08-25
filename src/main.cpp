@@ -17,11 +17,10 @@ void setup()
     api::setup();
     mqtt::setup();
     mqtt::on("control/mode", [&](String message)
-             { car::current_mode = message; car::setup(); });
+             { car::setup_mode::current = message; car::setup(); });
 }
 
 void loop()
 {
-    if (car::enabled and parameter::enabled)
-        car::loop();
+    car::loop();
 }
