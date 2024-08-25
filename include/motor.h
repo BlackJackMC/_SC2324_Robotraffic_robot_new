@@ -19,8 +19,15 @@ namespace motor
         enabled = true;
     }
 
+    void shutdown()
+    {
+        analogWrite(PWMA, 0);
+        enabled = false;
+    }
+
     void go(int speed, int direction = 1)
     {
+        if (!enabled) return;
         bool pin1 = (direction == 1);
         bool pin2 = !(direction == 1);
 

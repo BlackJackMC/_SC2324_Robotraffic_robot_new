@@ -13,8 +13,14 @@ namespace hall
     void setup(voidFuncPtr callback)
     {
         pinMode(port, INPUT);
-        attachInterrupt(digitalPinToInterrupt(2), callback, RISING); //pretty much it
+        attachInterrupt(digitalPinToInterrupt(port), callback, RISING); //pretty much it
         enabled = true;
+    }
+
+    void shutdown()
+    {
+        detachInterrupt(digitalPinToInterrupt(port));
+        enabled = false;
     }
 }
 

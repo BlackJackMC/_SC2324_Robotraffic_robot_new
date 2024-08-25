@@ -3,6 +3,8 @@
 
 #include <map>
 #include <functional>
+#include <optional>
+
 #include <Arduino.h>
 #include <WiFiClient.h>
 #include <PubSubClient.h>
@@ -10,7 +12,9 @@
 
 namespace mqtt
 {
-    std::map<String, std::function<void(String)>> callback;
+    using callback_t = std::function<void(String)>;
+
+    std::map<String, callback_t> callback;
     PubSubClient client;
     bool enabled = false;
 
@@ -20,7 +24,7 @@ namespace mqtt
         callback[String(topic)](temp);
     }
 
-    void on(String event, std::function<void(String)> f) { callback[event] = f; }
+    void on(String event, callback_t f) { callback[event] = f; }
 
     void setup(WiFiClient &wifi)
     {
