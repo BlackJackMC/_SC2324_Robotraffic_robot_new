@@ -2,8 +2,7 @@
 #ifndef API_H
 #define API_H
 
-#include <WiFiClient.h>
-#include <ArduinoHttpClient.h>
+#include <HttpClient.h>
 #include "env.h"
 #include "net.h"
 
@@ -11,9 +10,23 @@ namespace api
 {
     HttpClient client(net::wifi, HTTP_URL, HTTP_PORT);
 
+    void connect()
+    {
+        int err = client.get("/ping");
+        while (err != 0)
+        {
+            Serial.print(" Connection failed with error ");
+            Serial.print(err);
+            delay(5000);
+            err = client.get("/ping");
+        }
+        Serial.println(" Connected");
+    }
+
     void setup()
     {
-        client = HttpClient(net::wifi, HTTP_URL, HTTP_PORT);
+        Serial.print("API:");
+        connect();
     }
 }
 

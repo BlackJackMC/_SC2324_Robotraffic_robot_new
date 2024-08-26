@@ -2,7 +2,7 @@
 #define NET_H
 
 #include <Wifi.h>
-#include <WiFiClient.h>
+#include <WiFiSSLClient.h>
 #include "env.h"
 
 namespace net
@@ -10,10 +10,11 @@ namespace net
     const char *ssid = SSID;
     const char *pass = PASS;
 
-    WiFiClient wifi;
+    WiFiSSLClient wifi;
 
     void setup()
     {
+        Serial.print("Network: ");
         if (WiFi.status() == WL_NO_MODULE)
         {
             Serial.println("Wifi module not detected");
@@ -26,9 +27,9 @@ namespace net
             delay(500);
 
         if (WiFi.status() == WL_CONNECTED)
-            Serial.println("WiFi connected");
+            Serial.println("connected");
         else
-            Serial.println("WiFi failed to connect");
+            Serial.println("failed to connect");
     }
 }
 

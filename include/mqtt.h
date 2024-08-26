@@ -3,11 +3,10 @@
 
 #include <map>
 #include <functional>
-#include <optional>
 
 #include <Arduino.h>
-#include <WiFiClient.h>
 #include <PubSubClient.h>
+
 
 #include "env.h"
 #include "net.h"
@@ -15,15 +14,25 @@
 namespace mqtt
 {
     using callback_t = std::function<void(String)>;
-
+    
     std::map<String, callback_t> callback;
-    PubSubClient client;
+    PubSubClient client(net::wifi);
     bool enabled = false;
 
     void handler(char *topic, byte *buffer, size_t length)
     {
         String temp((char *)buffer, length);
-        callback[String(topic)](temp);
+        auto loc = callback.find(String(topic));
+
+        if (loc != callback.end())
+        {
+            loc->second(temp);
+        }
+        else
+        {
+            Serial.print("No callback registered for topic: ");
+            Serial.println(String(topic));
+        }
     }
 
     void on(String event, callback_t f) { callback[event] = f; }
@@ -37,8 +46,8 @@ namespace mqtt
                 Serial.println("Connected");
             else
             {
-                Serial.println(client.state());
-                Serial.println("Retrying");
+                Serial.print(client.state());
+                Serial.print(" Retrying ");
                 delay(5000);
             }
         }
@@ -46,7 +55,7 @@ namespace mqtt
 
     void setup()
     {
-        client.setClient(net::wifi);
+        Serial.print("MQTT: ");
         client.setServer(MQTT_URL, MQTT_PORT);
         client.setCallback(handler);
         connect();

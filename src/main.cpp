@@ -12,9 +12,9 @@ void setup()
     Serial.begin(9600);
     while (!Serial)
         ; // Wait for serial
-
+    Serial.println("Serial");
     net::setup();
-    api::setup();
+    // api::setup();
     mqtt::setup();
     mqtt::on("control/mode", [&](String message)
              { car::setup_mode::current = message; car::setup(); });
