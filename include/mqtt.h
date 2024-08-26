@@ -28,11 +28,28 @@ namespace mqtt
 
     void on(String event, callback_t f) { callback[event] = f; }
 
+    void connect()
+    {
+        client.disconnect();
+        while (!client.connected())
+        {
+            if (client.connect("Arduino Uno R4"))
+                Serial.println("Connected");
+            else
+            {
+                Serial.println(client.state());
+                Serial.println("Retrying");
+                delay(5000);
+            }
+        }
+    }
+
     void setup()
     {
         client.setClient(net::wifi);
         client.setServer(MQTT_URL, MQTT_PORT);
         client.setCallback(handler);
+        connect();
         enabled = true;
     }
 }

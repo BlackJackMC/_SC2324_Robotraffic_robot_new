@@ -9,8 +9,7 @@
 
 namespace api
 {
-    // Manually added empty constructor, please DO NOT ABUSE
-    HttpClient client;
+    HttpClient client(net::wifi, HTTP_URL, HTTP_PORT);
 
     void setup()
     {
