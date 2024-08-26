@@ -1,8 +1,7 @@
 #ifndef NET_H
 #define NET_H
 
-#include <Wifi.h>
-#include <WiFiSSLClient.h>
+#include <WiFiS3.h>
 #include "env.h"
 
 namespace net
@@ -21,6 +20,8 @@ namespace net
             while (true)
                 ;
         }
+
+        wifi.setCACert(CERTIFICATE);
 
         WiFi.begin(ssid, pass);
         for (int attempt = 0; WiFi.status() != WL_CONNECTED and attempt < 10; attempt++)
