@@ -13,11 +13,11 @@ namespace api
     void connect()
     {
         int err = client.get("/ping");
-        while (err != 0)
+        for (int attempt = 0; err != 0 and attempt < 10; attempt++)
         {
             Serial.print(" Connection failed with error ");
             Serial.print(err);
-            delay(5000);
+            delay(2000);
             err = client.get("/ping");
         }
         Serial.println(" Connected");

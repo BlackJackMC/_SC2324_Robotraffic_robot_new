@@ -13,10 +13,12 @@ namespace motor
 
     void setup()
     {
+        Serial.print("Motor: ");
         pinMode(PWMA, OUTPUT);
         pinMode(AIN1, OUTPUT);
         pinMode(AIN2, OUTPUT);
         enabled = true;
+        Serial.println("Done");
     }
 
     void stop() {analogWrite(PWMA, 0);}

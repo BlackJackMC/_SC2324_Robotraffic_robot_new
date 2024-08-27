@@ -21,6 +21,7 @@ namespace car
     {
         void Manual()
         {
+            Serial.println("Manual setup");
             mqtt::on("control/hall", [&](String message)
             { 
                 if (message == "on") 
@@ -62,11 +63,13 @@ namespace car
 
         void Auto()
         {
+            Serial.println("Auto setup");
             hall::setup(parameter::update_checkpoint);
             motor::setup();
             line::setup();
             steering::setup();
             parameter::setup();
+            Serial.println("Completed");
             mqtt::client.publish("control/steering", String(steering::enabled).c_str());
             mqtt::client.publish("control/hall", String(hall::enabled).c_str());
             mqtt::client.publish("control/motor", String(motor::enabled).c_str());
@@ -83,7 +86,7 @@ namespace car
             {"auto", setup_sequence::Auto},
             {"manual", setup_sequence::Manual},
         };
-        String current = mode[0];
+        String current = mode[1];
     }
     
 

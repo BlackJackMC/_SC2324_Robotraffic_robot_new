@@ -21,6 +21,7 @@ namespace mqtt
 
     void handler(char *topic, byte *buffer, size_t length)
     {
+        Serial.println("MQTT message received");
         String temp((char *)buffer, length);
         auto loc = callback.find(String(topic));
 
@@ -35,14 +36,25 @@ namespace mqtt
         }
     }
 
-    void on(String event, callback_t f) { callback[event] = f; }
+    void on(String topic, callback_t f) 
+    { 
+        Serial.println("Added event listener for " + topic);
+        if (callback.find(topic) == callback.end())
+        {
+            client.subscribe(topic.c_str());
+            Serial.println("Subscribed to " + topic);
+        }
+        
+        callback[topic] = f; 
+    }
 
     void connect()
     {
         client.disconnect();
         while (!client.connected())
         {
-            if (client.connect("Arduino Uno R4"))
+            if (client.connect(("Arduino Uno R4 - " + String(random(0xffff), HEX)).c_str(), MQTT_USERNAME, MQTT_PASS))
+            // if (client.connect(("Arduino Uno R4 - " + String(random(0xffff), HEX)).c_str()))
                 Serial.println("Connected");
             else
             {

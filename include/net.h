@@ -6,10 +6,41 @@
 
 namespace net
 {
-    const char *ssid = SSID;
-    const char *pass = PASS;
+    const char *ssid = WIFI_SSID;
+    const char *pass = WIFI_PASS;
+    int status = WL_IDLE_STATUS;
 
     WiFiSSLClient wifi;
+
+    void read_response()
+    {
+        uint32_t received_data_num = 0;
+        while (wifi.available())
+        {
+            char c = wifi.read();
+            Serial.print(c);
+            received_data_num++;
+            if (received_data_num % 80 == 0)
+            {
+                Serial.println();
+            }
+        }
+    }
+
+    void printWifiStatus()
+    {
+        Serial.print("SSID: ");
+        Serial.println(WiFi.SSID());
+
+        IPAddress ip = WiFi.localIP();
+        Serial.print("IP Address: ");
+        Serial.println(ip);
+
+        long rssi = WiFi.RSSI();
+        Serial.print("signal strength (RSSI):");
+        Serial.print(rssi);
+        Serial.println(" dBm");
+    }
 
     void setup()
     {
@@ -20,17 +51,23 @@ namespace net
             while (true)
                 ;
         }
+        String fv = WiFi.firmwareVersion();
+        if (fv < WIFI_FIRMWARE_LATEST_VERSION)
+        {
+            Serial.println("Please upgrade the firmware");
+        }
 
         wifi.setCACert(CERTIFICATE);
 
-        WiFi.begin(ssid, pass);
-        for (int attempt = 0; WiFi.status() != WL_CONNECTED and attempt < 10; attempt++)
-            delay(500);
-
-        if (WiFi.status() == WL_CONNECTED)
-            Serial.println("connected");
-        else
-            Serial.println("failed to connect");
+        while (status != WL_CONNECTED)
+        {
+            // Serial.print("Attempting to connect to SSID: ");
+            Serial.println(ssid);
+            status = WiFi.begin(ssid, pass);
+            delay(10000);
+        }
+        Serial.println("Connected");
+        printWifiStatus();
     }
 }
 

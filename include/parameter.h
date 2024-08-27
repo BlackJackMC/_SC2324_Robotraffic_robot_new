@@ -64,6 +64,7 @@ namespace parameter
 
     void setup()
     {
+        Serial.print("A bunch of event listeners: ");
         controller.SetMode(AUTOMATIC);
         controller.SetOutputLimits(0, 4000);
         mqtt::on("parameter/Kp", [&](String message){Kp = message.toDouble(); });
@@ -75,6 +76,7 @@ namespace parameter
         mqtt::on("parameter/speed", [&](String message){speed = message.toInt(); });
         mqtt::on("parameter/direction", [&](String message){direction = message.toInt(); });
         enabled = true;
+        Serial.println("Done");
     }
 }
 

@@ -12,8 +12,10 @@ namespace steering
 
     void setup()
     {
+        Serial.print("Servo: ");
         servo.attach(pin);
         enabled = true;
+        Serial.println("Done");
     }
 
     void turn(int angle)

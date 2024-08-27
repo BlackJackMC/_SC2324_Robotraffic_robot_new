@@ -15,18 +15,21 @@ namespace line
 
     void setup()
     {
+        Serial.print("Line: ");
         sensor.setTypeRC();
         sensor.setSensorPins(pin, count);
 
         digitalWrite(LED_BUILTIN, HIGH);
-
+        Serial.print("calibrating ");
         for (int i = 0; i < 400; i++)
         {
             sensor.calibrate();
         }
+        Serial.print("<-done ");
 
         digitalWrite(LED_BUILTIN, LOW);
         enabled = true;
+        Serial.println("Done");
     }
 }
 

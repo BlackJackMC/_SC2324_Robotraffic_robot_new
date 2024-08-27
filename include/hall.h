@@ -12,9 +12,11 @@ namespace hall
 
     void setup(voidFuncPtr callback)
     {
+        Serial.print("Hall: ");
         pinMode(port, INPUT);
         attachInterrupt(digitalPinToInterrupt(port), callback, RISING); //pretty much it
         enabled = true;
+        Serial.println("Done");
     }
 
     void shutdown()
