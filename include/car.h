@@ -17,6 +17,8 @@
 
 namespace car
 {
+    bool enabled = false;
+
     namespace setup_sequence
     {
         void Manual()
@@ -90,48 +92,71 @@ namespace car
     }
     
 
-    bool enabled = false, canRun = false;
-    int current_step = 0;
-
-    void wait()
+    namespace loop_sequence
     {
-        parameter::update_traffic();
-        if (parameter::canGo)
-            current_step++;
+        namespace test
+        {
+            void run()
+            {
+                parameter::update_angle();
+                if (parameter::canGo)
+                    motor::go(parameter::speed, parameter::direction);
+                else
+                    motor::stop();
+            }
+            void loop()
+            {
+                run();
+            }
+        }
+        namespace real
+        {
+            int current_step = 0;
+            void wait()
+            {
+                parameter::update_traffic();
+                if (parameter::canGo)
+                    current_step++;
+            }
+            void run()
+            {
+                parameter::update_angle();
+                if (parameter::canGo)
+                    motor::go(parameter::speed, parameter::direction);
+                else
+                    motor::stop();
+            }
+            void loop()
+            {
+                switch (current_step)
+                {
+                    case 0:
+                        wait();
+                    case 1:
+                        run();
+                }
+            }
+        }
     }
-
-    void run()
+    namespace loop_mode
     {
-        parameter::update_angle();
-        if (parameter::canGo)
-            motor::go(parameter::speed, parameter::direction);
-        else
-            motor::stop();
+        const String mode[] = {"test", "real"}; //For documenting
+        std::map<String, voidFuncPtr> executor = {
+            {"test", loop_sequence::test::loop},
+            {"real", loop_sequence::real::loop},
+        };
+        String current = mode[0];
     }
-
+    
     void setup()
     {
-        mqtt::on("car/run", [&](String message){ canRun = message.toInt(); });
         setup_mode::executor[setup_mode::current]();
         enabled = true;
     }
 
     void loop()
     {
-        if (canRun)
-        {
-            switch (current_step)
-            {
-                case 0:
-                    wait();
-                case 1:
-                    run();
-            }
-        }
-        else
-        {
-            motor::stop();
-        }
+        loop_mode::executor[loop_mode::current]();
     }
 
 }

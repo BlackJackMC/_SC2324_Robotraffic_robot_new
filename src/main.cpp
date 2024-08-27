@@ -15,38 +15,15 @@ void setup()
     // randomSeed(micros());
     Serial.println("Serial");
     net::setup();
-
-    // if (net::wifi.connect("robotraffic.lhpsc.click", 443))
-    // {
-    //     Serial.println("Lmao");
-    //     net::wifi.println("GET /ping HTTP/1.1");
-    //     net::wifi.println("Host: robotraffic.lhpsc.click");
-    //     net::wifi.println("Connection: close");
-    //     net::wifi.println();
-    // }
-    // else
-    // {
-    //     Serial.println("How");
-    // }
     api::setup();
     mqtt::setup();
+    mqtt::client.publish("serial", "Network setup completed");
     car::setup();
-    // mqtt::on("control/mode", [&](String message)
-    //          { car::setup_mode::current = message; car::setup(); });
+    mqtt::client.publish("serial", "Car setup completed");
 }
 
 void loop()
 {
-    // net::read_response();
-    // if (!net::wifi.connected())
-    // {
-    //     Serial.println();
-    //     Serial.println("disconnecting from server.");
-    //     net::wifi.stop();
-
-    //     // do nothing forevermore:
-    //     while (true)
-    //         ;
-    // }
-    // car::loop();
+    mqtt::client.loop();
+    car::loop();
 }
