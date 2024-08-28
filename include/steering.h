@@ -10,12 +10,16 @@ namespace steering
     bool enabled = false;
     Servo servo;
 
-    void setup()
+    bool setup()
     {
+        if (enabled) return false;
+
         Serial.print("Servo: ");
         servo.attach(pin);
         enabled = true;
         Serial.println("Done");
+
+        return enabled;
     }
 
     void turn(int angle)

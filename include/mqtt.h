@@ -21,7 +21,6 @@ namespace mqtt
 
     void handler(char *topic, byte *buffer, size_t length)
     {
-        Serial.println("MQTT message received");
         String temp((char *)buffer, length);
         auto loc = callback.find(String(topic));
 
@@ -39,13 +38,18 @@ namespace mqtt
     void on(String topic, callback_t f) 
     { 
         Serial.println("Added event listener for " + topic);
-        if (callback.find(topic) == callback.end())
+        auto loc = callback.find(topic);
+        if (loc == callback.end())
         {
             client.subscribe(topic.c_str());
+            callback[topic] = f; 
             Serial.println("Subscribed to " + topic);
         }
+        else
+        {
+            loc->second = f;
+        }
         
-        callback[topic] = f; 
     }
 
     void connect()

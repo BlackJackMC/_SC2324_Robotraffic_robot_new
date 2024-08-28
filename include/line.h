@@ -15,6 +15,7 @@ namespace line
 
     void setup()
     {
+        if (enabled) return false;
         Serial.print("Line: ");
         sensor.setTypeRC();
         sensor.setSensorPins(pin, count);
@@ -30,6 +31,11 @@ namespace line
         digitalWrite(LED_BUILTIN, LOW);
         enabled = true;
         Serial.println("Done");
+    }
+
+    void shutdown()
+    {
+        enabled = false;
     }
 }
 

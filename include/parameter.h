@@ -84,29 +84,34 @@ namespace parameter
 
     void setup()
     {
+        if (enabled) return;
         Serial.print("A bunch of event listeners: ");
         controller.SetMode(AUTOMATIC);
         controller.SetOutputLimits(0, 4000);
         mqtt::on("parameter/Kp", [&](String message)
-                 { Serial.println(message); Kp = message.toDouble(); });
+                 { Serial.println(message); all(); Kp = message.toDouble(); });
         mqtt::on("parameter/Ki", [&](String message)
-                 { Serial.println(message); Ki = message.toDouble(); });
+                 { Serial.println(message); all(); Ki = message.toDouble(); });
         mqtt::on("parameter/Kd", [&](String message)
-                 { Serial.println(message); Kd = message.toDouble(); });
+                 { Serial.println(message); all(); Kd = message.toDouble(); });
         mqtt::on("parameter/canGo", [&](String message)
-                 { Serial.println(message); canGo = message.toInt(); });
+                 { Serial.println(message); all(); canGo = message.toInt(); });
         mqtt::on("parameter/setpoint", [&](String message)
-                 { Serial.println(message); setpoint = message.toDouble(); });
+                 { Serial.println(message); all(); setpoint = message.toDouble(); });
         mqtt::on("parameter/checkpoint", [&](String message)
-                 { Serial.println(message); current_checkpoint = message.toInt(); });
+                 { Serial.println(message); all(); current_checkpoint = message.toInt(); });
         mqtt::on("parameter/speed", [&](String message)
-                 { Serial.println(message); speed = message.toInt(); });
+                 { Serial.println(message); all(); speed = message.toInt(); });
         mqtt::on("parameter/direction", [&](String message)
-                 { Serial.println(message); direction = message.toInt(); });
-        mqtt::on("parameter/all", [&](String message)
-                 { Serial.println(message); all(); });
+                 { Serial.println(message); all(); direction = message.toInt(); });
         enabled = true;
         Serial.println("Done");
+    }
+
+    void shutdown()
+    {
+        enabled = false;
+        //Maybe do something useful here
     }
 }
 

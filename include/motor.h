@@ -13,6 +13,7 @@ namespace motor
 
     void setup()
     {
+        if (enabled) return;
         Serial.print("Motor: ");
         pinMode(PWMA, OUTPUT);
         pinMode(AIN1, OUTPUT);
