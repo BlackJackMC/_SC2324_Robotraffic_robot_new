@@ -39,11 +39,11 @@ namespace parameter
         mqtt::client.publish("output/parameter/PID/P", String(Kp).c_str());
         mqtt::client.publish("output/parameter/PID/I", String(Ki).c_str());
         mqtt::client.publish("output/parameter/PID/D", String(Kd).c_str());
-        mqtt::client.publish("output/setpoint", String(setpoint).c_str());
-        mqtt::client.publish("output/canGo", String(canGo).c_str());
-        mqtt::client.publish("output/current_checkpoint", String(current_checkpoint).c_str());
-        mqtt::client.publish("output/speed", String(speed).c_str());
-        mqtt::client.publish("output/direction", String(direction).c_str());
+        mqtt::client.publish("output/parameter/setpoint", String(setpoint).c_str());
+        mqtt::client.publish("output/parameter/canGo", String(canGo).c_str());
+        mqtt::client.publish("output/parameter/current_checkpoint", String(current_checkpoint).c_str());
+        mqtt::client.publish("output/parameter/speed", String(speed).c_str());
+        mqtt::client.publish("output/parameter/direction", String(direction).c_str());
     }
 
     void update_angle()
@@ -88,24 +88,15 @@ namespace parameter
         controller.SetOutputLimits(0, 4000);
 
         Serial.println("A bunch of event listeners: ");
-        mqtt::on("input/parameter/PID/P", [&](String message)
-                 { Kp = message.toDouble(); print_all(); });
-        mqtt::on("input/parameter/PID/I", [&](String message)
-                 { Ki = message.toDouble(); print_all(); });
-        mqtt::on("input/parameter/PID/D", [&](String message)
-                 { Kd = message.toDouble(); print_all(); });
-        mqtt::on("input/parameter/canGo", [&](String message)
-                 { canGo = message.toInt(); print_all(); });
-        mqtt::on("input/parameter/setpoint", [&](String message)
-                 { setpoint = message.toDouble(); print_all(); });
-        mqtt::on("input/parameter/checkpoint", [&](String message)
-                 { current_checkpoint = message.toInt(); print_all(); });
-        mqtt::on("input/parameter/speed", [&](String message)
-                 { speed = message.toInt(); print_all(); });
-        mqtt::on("input/parameter/direction", [&](String message)
-                 { direction = message.toInt(); print_all(); });
-        mqtt::on("input/parameter/all", [&](String message)
-                 { print_all(); });
+        mqtt::on("input/parameter/PID/P", [&](String message) { Kp = message.toDouble(); });
+        mqtt::on("input/parameter/PID/I", [&](String message) { Ki = message.toDouble(); });
+        mqtt::on("input/parameter/PID/D", [&](String message) { Kd = message.toDouble(); });
+        mqtt::on("input/parameter/canGo", [&](String message) { canGo = message.toInt(); });
+        mqtt::on("input/parameter/setpoint", [&](String message) { setpoint = message.toDouble(); });
+        mqtt::on("input/parameter/current_checkpoint", [&](String message) { current_checkpoint = message.toInt(); });
+        mqtt::on("input/parameter/speed", [&](String message) { speed = message.toInt(); });
+        mqtt::on("input/parameter/direction", [&](String message) { direction = message.toInt(); });
+        mqtt::on("input/parameter/all", [&](String message) { print_all(); });
         enabled = true;
         Serial.println("Done");
     }

@@ -25,9 +25,11 @@ namespace loop_controller
             }
             void run()
             {
-                parameter::update_angle();
                 if (parameter::canGo)
+                {
+                    parameter::update_angle();
                     motor::go(parameter::speed, parameter::direction);
+                }
                 else
                     motor::stop();
             }

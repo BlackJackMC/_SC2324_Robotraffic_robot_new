@@ -36,14 +36,16 @@
 
 - input
   - parameter
-    - P: double
-    - I: double
-    - D: double
+    - PID
+      - P: double
+      - I: double
+      - D: double
     - setpoint: double
     - canGo: bool (int is alright)
     - current_checkpoint: int
     - speed: int
     - direction: int
+    - all: void (print all values)
   - control
     - hall: setup
     - motor: setup
