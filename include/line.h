@@ -15,7 +15,7 @@ namespace line
 
     void setup()
     {
-        if (enabled) return false;
+        if (enabled) return;
         Serial.print("Line: ");
         sensor.setTypeRC();
         sensor.setSensorPins(pin, count);

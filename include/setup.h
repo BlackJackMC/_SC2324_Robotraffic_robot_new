@@ -23,13 +23,13 @@ namespace setup_sequence
             hall::setup(parameter::update_checkpoint);
             count += hall::enabled;
         }
-        else
+        else if (message == "shutdown")
         {
             count -= hall::enabled;
             hall::shutdown();
         }
 
-        mqtt::client.publish("control/hall", String(hall::enabled).c_str());
+        mqtt::client.publish("output/state/hall", String(hall::enabled).c_str());
     }
     void motor(String message)
     {
@@ -38,13 +38,13 @@ namespace setup_sequence
             motor::setup();
             count += motor::enabled;
         }
-        else
+        else if (message == "shutdown")
         {
             count -= motor::enabled;
             motor::shutdown();
         }
 
-        mqtt::client.publish("control/motor", String(motor::enabled).c_str());
+        mqtt::client.publish("output/state/motor", String(motor::enabled).c_str());
     }
     void line(String message)
     {
@@ -53,12 +53,12 @@ namespace setup_sequence
             line::setup();
             count += line::enabled;
         }
-        else
+        else if (message == "shutdown")
         {
             count -= line::enabled;
             line::shutdown();
         }
-        mqtt::client.publish("control/line", String(line::enabled).c_str());
+        mqtt::client.publish("output/state/line", String(line::enabled).c_str());
     }
     void steering(String message)
     {
@@ -67,13 +67,13 @@ namespace setup_sequence
             steering::setup();
             count += steering::enabled;
         }
-        else
+        else if (message == "shutdown")
         {
             count -= steering::enabled;
             steering::shutdown();
         }
 
-        mqtt::client.publish("control/steering", String(steering::enabled).c_str());
+        mqtt::client.publish("output/state/steering", String(steering::enabled).c_str());
     }
     void parameter(String message)
     {
@@ -82,16 +82,17 @@ namespace setup_sequence
             parameter::setup();
             count += parameter::enabled;
         }
-        else
+        else if (message == "shutdown")
         {
             parameter::shutdown();
             count -= parameter::enabled;
         }
 
-        mqtt::client.publish("control/parameter", String(parameter::enabled).c_str());
+        mqtt::client.publish("output/state/parameter", String(parameter::enabled).c_str());
     }
     void all(String message)
     {
+        Serial.println("[car] doing setup");
         hall(message);
         motor(message);
         line(message);
@@ -102,15 +103,18 @@ namespace setup_sequence
     {
         if (enabled) return;
         
-        //Provide some controls for setup sequence
-        mqtt::on("control/hall", hall);
-        mqtt::on("control/motor", motor);
-        mqtt::on("control/line", line);
-        mqtt::on("control/steering", steering);
-        mqtt::on("control/parameter", parameter);
-        mqtt::on("control/all", all);
-        mqtt::on("control/car", [&](String message) 
-                 { loop_controller::current_mode = message; 
+        //Provide some states for setup sequence
+        mqtt::on("input/control/hall", hall);
+        mqtt::on("input/control/motor", motor);
+        mqtt::on("input/control/line", line);
+        mqtt::on("input/control/steering", steering);
+        mqtt::on("input/control/parameter", parameter);
+        mqtt::on("input/control/all", all);
+        mqtt::on("input/control/car", [&](String message) 
+                 {
+                   Serial.println("[mqtt] change car mode");
+                   loop_controller::current_mode = message; 
+                   loop_controller::current_step = 0;
                    all("shutdown");
                    all("setup"); });
 

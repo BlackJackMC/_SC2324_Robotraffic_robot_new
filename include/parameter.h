@@ -11,7 +11,7 @@
 #include "steering.h"
 
 #pragma once
-#define get_name(var) #var
+#define get_value(var) (#var "=" + String(var)).c_str()
 
 namespace parameter
 {
@@ -34,20 +34,16 @@ namespace parameter
     double Kp, Ki, Kd;
     PID controller(&input, &output, &setpoint, Kp, Ki, Kd, DIRECT);
 
-    template <typename T>
-    String format(T a)
+    void print_all()
     {
-        return get_name(a) + String(a);
-    }
-
-    void all()
-    {
-        Serial.println("Printing all parameters");
-        mqtt::client.publish("parameter/all", (format<bool>(canGo) + format<bool>(enabled) +
-                                               format<int>(current_checkpoint) + format<int>(speed) +
-                                               format<int>(direction) + format<int>(Kp) + format<int>(Ki) + format<int>(Kd))
-                                                  .c_str());
-        ;
+        mqtt::client.publish("output/parameter/PID/P", String(Kp).c_str());
+        mqtt::client.publish("output/parameter/PID/I", String(Ki).c_str());
+        mqtt::client.publish("output/parameter/PID/D", String(Kd).c_str());
+        mqtt::client.publish("output/setpoint", String(setpoint).c_str());
+        mqtt::client.publish("output/canGo", String(canGo).c_str());
+        mqtt::client.publish("output/current_checkpoint", String(current_checkpoint).c_str());
+        mqtt::client.publish("output/speed", String(speed).c_str());
+        mqtt::client.publish("output/direction", String(direction).c_str());
     }
 
     void update_angle()
@@ -55,6 +51,8 @@ namespace parameter
         input = line::sensor.readLineBlack(line::value);
         controller.Compute();
         steering::servo.write(output);
+        mqtt::client.publish("output/parameter/PID/input", String(input).c_str());
+        mqtt::client.publish("output/parameter/PID/output", String(output).c_str());
     }
 
     // For hall callback
@@ -84,26 +82,30 @@ namespace parameter
 
     void setup()
     {
-        if (enabled) return;
-        Serial.print("A bunch of event listeners: ");
+        if (enabled)
+            return;
         controller.SetMode(AUTOMATIC);
         controller.SetOutputLimits(0, 4000);
-        mqtt::on("parameter/Kp", [&](String message)
-                 { Serial.println(message); all(); Kp = message.toDouble(); });
-        mqtt::on("parameter/Ki", [&](String message)
-                 { Serial.println(message); all(); Ki = message.toDouble(); });
-        mqtt::on("parameter/Kd", [&](String message)
-                 { Serial.println(message); all(); Kd = message.toDouble(); });
-        mqtt::on("parameter/canGo", [&](String message)
-                 { Serial.println(message); all(); canGo = message.toInt(); });
-        mqtt::on("parameter/setpoint", [&](String message)
-                 { Serial.println(message); all(); setpoint = message.toDouble(); });
-        mqtt::on("parameter/checkpoint", [&](String message)
-                 { Serial.println(message); all(); current_checkpoint = message.toInt(); });
-        mqtt::on("parameter/speed", [&](String message)
-                 { Serial.println(message); all(); speed = message.toInt(); });
-        mqtt::on("parameter/direction", [&](String message)
-                 { Serial.println(message); all(); direction = message.toInt(); });
+
+        Serial.println("A bunch of event listeners: ");
+        mqtt::on("input/parameter/PID/P", [&](String message)
+                 { Kp = message.toDouble(); print_all(); });
+        mqtt::on("input/parameter/PID/I", [&](String message)
+                 { Ki = message.toDouble(); print_all(); });
+        mqtt::on("input/parameter/PID/D", [&](String message)
+                 { Kd = message.toDouble(); print_all(); });
+        mqtt::on("input/parameter/canGo", [&](String message)
+                 { canGo = message.toInt(); print_all(); });
+        mqtt::on("input/parameter/setpoint", [&](String message)
+                 { setpoint = message.toDouble(); print_all(); });
+        mqtt::on("input/parameter/checkpoint", [&](String message)
+                 { current_checkpoint = message.toInt(); print_all(); });
+        mqtt::on("input/parameter/speed", [&](String message)
+                 { speed = message.toInt(); print_all(); });
+        mqtt::on("input/parameter/direction", [&](String message)
+                 { direction = message.toInt(); print_all(); });
+        mqtt::on("input/parameter/all", [&](String message)
+                 { print_all(); });
         enabled = true;
         Serial.println("Done");
     }
@@ -111,7 +113,7 @@ namespace parameter
     void shutdown()
     {
         enabled = false;
-        //Maybe do something useful here
+        // Maybe do something useful here
     }
 }
 

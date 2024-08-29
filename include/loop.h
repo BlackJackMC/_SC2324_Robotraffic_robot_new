@@ -21,6 +21,7 @@ namespace loop_controller
             void setup()
             {
                 hall::shutdown();
+                current_step++;
             }
             void run()
             {
@@ -32,7 +33,17 @@ namespace loop_controller
             }
             void loop()
             {
-                run();
+                Serial.println("[car] current step: " + String(current_step));
+
+                switch (current_step)
+                {
+                    case 0:
+                        setup();
+                        break;
+                    case 1:
+                        run();
+                        break;
+                }
             }
         }
         namespace real

@@ -34,22 +34,41 @@
 
 ## All topic
 
--   parameter
-    -   Kp: double
-    -   Ki: double
-    -   Kd: double
-    -   setpoint: double
-    -   canGo: bool (int is alright)
-    -   checkpoint: int
-    -   speed: int
-    -   direction: int
--   control
-    -   hall: setup
-    -   motor: setup
-    -   line: setup
-    -   steering: setup
-    -   all: setup all
-    -   car: change mode (test mode / real mode)
+- input
+  - parameter
+    - P: double
+    - I: double
+    - D: double
+    - setpoint: double
+    - canGo: bool (int is alright)
+    - current_checkpoint: int
+    - speed: int
+    - direction: int
+  - control
+    - hall: setup
+    - motor: setup
+    - line: setup
+    - steering: setup
+    - all: setup all
+    - car: change mode (test mode / real mode)
+- output
+  - parameter
+    - PID
+      - P: double
+      - I: double
+      - D: double
+      - input: double
+      - output: double
+    - setpoint: double
+    - canGo: bool (int is alright)
+    - current_checkpoint: int
+    - speed: int
+    - direction: int
+  - state
+    - hall: 0 / 1
+    - motor: 0 / 1
+    - line: 0 / 1
+    - steering: 0 / 1
 
 ## Control flow
 

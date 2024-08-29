@@ -19,6 +19,7 @@ void setup()
     mqtt::setup();
     mqtt::client.publish("serial", "Network setup completed");
     car::setup();
+    mqtt::client.publish("serial", "Car setup completed");
 }
 
 void loop()
