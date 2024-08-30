@@ -36,6 +36,7 @@ namespace parameter
 
     void print_all()
     {
+        // Subscribe to different topics to prevent self-destruction
         mqtt::client.publish("output/parameter/PID/P", String(Kp).c_str());
         mqtt::client.publish("output/parameter/PID/I", String(Ki).c_str());
         mqtt::client.publish("output/parameter/PID/D", String(Kd).c_str());
