@@ -34,17 +34,39 @@ namespace parameter
     double Kp, Ki, Kd;
     PID controller(&input, &output, &setpoint, Kp, Ki, Kd, DIRECT);
 
-    void print_all()
+    void get_all()
     {
-        // Subscribe to different topics to prevent self-destruction
-        mqtt::client.publish("output/parameter/PID/P", String(Kp).c_str());
-        mqtt::client.publish("output/parameter/PID/I", String(Ki).c_str());
-        mqtt::client.publish("output/parameter/PID/D", String(Kd).c_str());
-        mqtt::client.publish("output/parameter/setpoint", String(setpoint).c_str());
-        mqtt::client.publish("output/parameter/canGo", String(canGo).c_str());
-        mqtt::client.publish("output/parameter/current_checkpoint", String(current_checkpoint).c_str());
-        mqtt::client.publish("output/parameter/speed", String(speed).c_str());
-        mqtt::client.publish("output/parameter/direction", String(direction).c_str());
+        JsonObject data;
+        JsonArray PID;
+        String buffer;
+
+        data["speed"] = speed;
+        data["direction"] = direction;
+        data["setpoint"] = setpoint;
+        data["canGo"] = canGo;
+        PID = data["PID"].to<JsonArray>();
+        PID.add(Kp);
+        PID.add(Ki);
+        PID.add(Kd);
+
+        serializeJson(data, buffer);
+        mqtt::client.publish("input/parameter", buffer.c_str(), true);
+    }
+
+    void update_data(String message)
+    {
+        JsonDocument data;
+        DeserializationError e = deserializeJson(data, message);
+
+        if (e) Serial.println(e.f_str());
+
+        speed = data["speed"];
+        direction = data["direction"];
+        setpoint = data["setpoint"];
+        canGo = data["canGo"];
+        Kp = data["PID"][0];
+        Ki = data["PID"][1];
+        Kd = data["PID"][2];
     }
 
     void update_angle()
@@ -69,7 +91,7 @@ namespace parameter
 
         current = response.as<JsonArray>()[0];
 
-        parameter::canGo = decision[current["state"]];
+        parameter::canGo = decision[response.as<JsonArray>()[0]["state"]];
     }
 
     // For hall callback
@@ -89,15 +111,8 @@ namespace parameter
         controller.SetOutputLimits(0, 4000);
 
         Serial.println("A bunch of event listeners: ");
-        mqtt::on("input/parameter/PID/P", [&](String message) { Kp = message.toDouble(); });
-        mqtt::on("input/parameter/PID/I", [&](String message) { Ki = message.toDouble(); });
-        mqtt::on("input/parameter/PID/D", [&](String message) { Kd = message.toDouble(); });
-        mqtt::on("input/parameter/canGo", [&](String message) { canGo = message.toInt(); });
-        mqtt::on("input/parameter/setpoint", [&](String message) { setpoint = message.toDouble(); });
-        mqtt::on("input/parameter/current_checkpoint", [&](String message) { current_checkpoint = message.toInt(); });
-        mqtt::on("input/parameter/speed", [&](String message) { speed = message.toInt(); });
-        mqtt::on("input/parameter/direction", [&](String message) { direction = message.toInt(); });
-        mqtt::on("input/parameter/all", [&](String message) { print_all(); });
+        mqtt::on("input/parameter/all", [&](String message) { get_all(); });
+        mqtt::on("input/parameter", update_data);
         enabled = true;
         Serial.println("Done");
     }

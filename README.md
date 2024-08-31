@@ -35,17 +35,8 @@
 ## All topic
 
 - input
-  - parameter
-    - PID
-      - P: double
-      - I: double
-      - D: double
-    - setpoint: double
-    - canGo: bool (int is alright)
-    - current_checkpoint: int
-    - speed: int
-    - direction: int
-    - all: void (print all values)
+  - parameter: update_data
+    - all: get_all
   - control
     - hall: setup
     - motor: setup
@@ -56,16 +47,8 @@
 - output
   - parameter
     - PID
-      - P: double
-      - I: double
-      - D: double
       - input: double
       - output: double
-    - setpoint: double
-    - canGo: bool (int is alright)
-    - current_checkpoint: int
-    - speed: int
-    - direction: int
   - state
     - hall: 0 / 1
     - motor: 0 / 1
