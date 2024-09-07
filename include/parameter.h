@@ -28,7 +28,7 @@ namespace parameter
         {"green blink4", true},
         {"yellow", true},
     };
-    int speed, direction;
+    int speed, direction, angle;
 
     double setpoint, input, output;
     double Kp, Ki, Kd;
@@ -36,7 +36,7 @@ namespace parameter
 
     void get_all()
     {
-        JsonObject data;
+        JsonDocument data;
         JsonArray PID;
         String buffer;
 
@@ -44,12 +44,16 @@ namespace parameter
         data["direction"] = direction;
         data["setpoint"] = setpoint;
         data["canGo"] = canGo;
+        data["angle"] = angle;
         PID = data["PID"].to<JsonArray>();
         PID.add(Kp);
         PID.add(Ki);
         PID.add(Kd);
-
+        serializeJsonPretty(data, Serial);
+        Serial.println();
         serializeJson(data, buffer);
+        Serial.println("[parameter] Sending parameters");
+        Serial.println(buffer);
         mqtt::client.publish("input/parameter", buffer.c_str(), true);
     }
 
@@ -59,7 +63,8 @@ namespace parameter
         DeserializationError e = deserializeJson(data, message);
 
         if (e) Serial.println(e.f_str());
-
+        
+        angle = data["angle"];
         speed = data["speed"];
         direction = data["direction"];
         setpoint = data["setpoint"];
@@ -73,7 +78,8 @@ namespace parameter
     {
         input = line::sensor.readLineBlack(line::value);
         controller.Compute();
-        steering::servo.write(output);
+        angle = map(output, 0, 4000, 80, 110);
+        steering::turn(angle);
         mqtt::client.publish("output/parameter/PID/input", String(input).c_str());
         mqtt::client.publish("output/parameter/PID/output", String(output).c_str());
     }
@@ -113,6 +119,7 @@ namespace parameter
         Serial.println("A bunch of event listeners: ");
         mqtt::on("input/parameter/all", [&](String message) { get_all(); });
         mqtt::on("input/parameter", update_data);
+        mqtt::on("input/parameter/angle", [&](String message) { steering::turn(message.toInt()); });
         enabled = true;
         Serial.println("Done");
     }

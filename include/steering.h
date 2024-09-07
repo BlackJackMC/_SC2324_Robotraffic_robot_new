@@ -6,7 +6,7 @@
 
 namespace steering
 {
-    const int pin = 7;
+    const int pin = 6;
     bool enabled = false;
     Servo servo;
 
@@ -24,6 +24,7 @@ namespace steering
 
     void turn(int angle)
     {
+        Serial.println("[servo]: turning " + String(angle) + " degrees");
         servo.write(angle);
     }
 

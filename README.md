@@ -14,7 +14,7 @@
 | ------ | ------- |
 | PWMA   | 3       |
 | AIN1   | 4       |
-| AIN2   | 6       |
+| AIN2   | 7       |
 
 ## QTRSensor 5RC
 
@@ -30,7 +30,7 @@
 
 | servo  | arduino |
 | ------ | ------- |
-| signal | 7       |
+| signal | 6       |
 
 ## All topic
 

@@ -35,8 +35,6 @@ namespace loop_controller
             }
             void loop()
             {
-                Serial.println("[car] current step: " + String(current_step));
-
                 switch (current_step)
                 {
                     case 0:
