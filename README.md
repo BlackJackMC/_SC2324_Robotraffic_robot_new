@@ -49,11 +49,7 @@
     - PID
       - input: double
       - output: double
-  - state
-    - hall: 0 / 1
-    - motor: 0 / 1
-    - line: 0 / 1
-    - steering: 0 / 1
+  - state: sensors state
 
 ## Control flow
 

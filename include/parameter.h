@@ -78,7 +78,7 @@ namespace parameter
     {
         input = line::sensor.readLineBlack(line::value);
         controller.Compute();
-        angle = map(output, 0, 4000, 80, 110);
+        angle = map(output, 0, 4000, 0, 150); //Need reconsideration!!
         steering::turn(angle);
         mqtt::client.publish("output/parameter/PID/input", String(input).c_str());
         mqtt::client.publish("output/parameter/PID/output", String(output).c_str());

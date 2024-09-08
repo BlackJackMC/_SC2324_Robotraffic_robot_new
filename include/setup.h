@@ -2,6 +2,8 @@
 #define SETUP_H
 
 #include <Arduino.h>
+#include <ArduinoJson.h>
+
 #include "mqtt.h"
 #include "hall.h"
 #include "motor.h"
@@ -16,6 +18,23 @@ namespace setup_sequence
     const int required = 5;
     bool enabled = false;
 
+    void send_state() 
+    {
+        JsonDocument data;
+        String buffer;
+
+        data["hall"] = hall::enabled;
+        data["motor"] = motor::enabled;
+        data["line"] = line::enabled;
+        data["servo"] = steering::enabled;
+        data["parameter"] = parameter::enabled;
+
+        serializeJsonPretty(data, Serial); //For debug
+        serializeJson(data, buffer);
+        Serial.println("[setup] Sending state");
+        mqtt::client.publish("output/state", buffer.c_str());
+    }
+
     void hall(String message)
     {
         if (message == "setup")
@@ -29,7 +48,7 @@ namespace setup_sequence
             hall::shutdown();
         }
 
-        mqtt::client.publish("output/state/hall", String(hall::enabled).c_str());
+        send_state();
     }
     void motor(String message)
     {
@@ -44,7 +63,7 @@ namespace setup_sequence
             motor::shutdown();
         }
 
-        mqtt::client.publish("output/state/motor", String(motor::enabled).c_str());
+        send_state();
     }
     void line(String message)
     {
@@ -58,7 +77,7 @@ namespace setup_sequence
             count -= line::enabled;
             line::shutdown();
         }
-        mqtt::client.publish("output/state/line", String(line::enabled).c_str());
+        send_state();
     }
     void steering(String message)
     {
@@ -73,7 +92,7 @@ namespace setup_sequence
             steering::shutdown();
         }
 
-        mqtt::client.publish("output/state/steering", String(steering::enabled).c_str());
+        send_state();
     }
     void parameter(String message)
     {
@@ -88,7 +107,7 @@ namespace setup_sequence
             count -= parameter::enabled;
         }
 
-        mqtt::client.publish("output/state/parameter", String(parameter::enabled).c_str());
+        send_state();
     }
     void all(String message)
     {
