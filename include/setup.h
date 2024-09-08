@@ -11,12 +11,12 @@
 #include "steering.h"
 #include "parameter.h"
 #include "loop.h"
+#include "car.h"
 
 namespace setup_sequence
 {
     int count = 0; // Track the setup progress, not the proper way but it works
     const int required = 5;
-    bool enabled = false;
 
     void send_state() 
     {
@@ -28,6 +28,7 @@ namespace setup_sequence
         data["line"] = line::enabled;
         data["servo"] = steering::enabled;
         data["parameter"] = parameter::enabled;
+        data["car"] = car::enabled;
 
         serializeJsonPretty(data, Serial); //For debug
         serializeJson(data, buffer);
@@ -120,7 +121,7 @@ namespace setup_sequence
     }
     void setup()
     {
-        if (enabled) return;
+        if (car::enabled) return;
         
         //Provide some states for setup sequence
         mqtt::on("input/control/hall", hall);
@@ -139,7 +140,7 @@ namespace setup_sequence
 
         all("setup"); //Do all setup
 
-        enabled = true;
+        car::enabled = true;
     }
 }
 

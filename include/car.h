@@ -12,7 +12,7 @@
 
 namespace car
 {
-    const String stage[] = {"setup", "run"}; // For documenting
+    //const String stage[] = {"setup", "run"}; // For documenting
     int current_stage = 0;
     bool enabled = false;
 

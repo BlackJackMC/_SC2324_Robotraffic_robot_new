@@ -3,7 +3,6 @@
 
 #include <map>
 
-#include "hall.h"
 #include "motor.h"
 #include "setup.h"
 #include "parameter.h"
@@ -20,7 +19,7 @@ namespace loop_controller
         {
             void setup()
             {
-                hall::shutdown();
+                setup_sequence::hall("shutdown");
                 current_step++;
             }
             void run()
