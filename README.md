@@ -12,25 +12,26 @@
 
 | driver | arduino |
 | ------ | ------- |
-| PWMA   | 3       |
-| AIN1   | 4       |
+| PWMA   | 5       |
+| AIN1   | 6       |
 | AIN2   | 7       |
 
 ## QTRSensor 5RC
 
 | line | arduino |
 | ---- | ------- |
-| 1    | 9       |
-| 2    | 10      |
-| 3    | 11      |
-| 4    | 12      |
-| 5    | 13      |
+| 1    | 8       |
+| 2    | 9       |
+| 3    | 10      |
+| 4    | 11      |
+| 5    | 12      |
+| En   | 13      |
 
 ## Servo
 
 | servo  | arduino |
 | ------ | ------- |
-| signal | 6       |
+| signal | 3       |
 
 ## All topic
 

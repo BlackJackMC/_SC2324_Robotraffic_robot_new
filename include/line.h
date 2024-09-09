@@ -10,6 +10,7 @@ namespace line
     bool enabled = false;
 
     const int count = 5;
+    const uint8_t emitterPin = 2;
     const uint8_t pin[] = {9, 10, 11, 12, 13};
     uint16_t value[5];
 
@@ -19,6 +20,7 @@ namespace line
         Serial.print("Line: ");
         sensor.setTypeRC();
         sensor.setSensorPins(pin, count);
+        sensor.setEmitterPin(emitterPin);
 
         digitalWrite(LED_BUILTIN, HIGH);
         Serial.print("calibrating ");
