@@ -8,23 +8,14 @@
 #include "api.h"
 
 #include "setup.h"
-#include "loop.h"
+#include "loop_controller.h"
 
 namespace car
 {
-    //const String stage[] = {"setup", "run"}; // For documenting
-    int current_stage = 0;
-    bool enabled = false;
+    extern bool enabled;
 
-    void setup()
-    {
-        setup_sequence::setup();
-    }
-
-    void loop()
-    {
-        loop_controller::executor[loop_controller::current_mode]();
-    }
+    void setup();
+    void loop();
 }
 
 #endif

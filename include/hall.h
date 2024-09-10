@@ -7,25 +7,11 @@
 
 namespace hall
 {
-    int port = 2;
-    bool enabled = false;
+    extern int port;
+    extern bool enabled;
 
-    void setup(voidFuncPtr callback)
-    {
-        if (enabled) return;
-        Serial.print("Hall: ");
-        pinMode(port, INPUT);
-        attachInterrupt(digitalPinToInterrupt(port), callback, RISING); //pretty much it
-        enabled = true;
-        Serial.println("Done");
-        return;
-    }
-
-    void shutdown()
-    {
-        detachInterrupt(digitalPinToInterrupt(port));
-        enabled = false;
-    }
+    void setup(voidFuncPtr callback);
+    void shutdown();
 }
 
 #endif
