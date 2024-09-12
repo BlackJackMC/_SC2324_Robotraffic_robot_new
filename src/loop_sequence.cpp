@@ -15,6 +15,7 @@ namespace loop_sequence::test
     }
     void run()
     {
+        parameter::update_traffic();
         if (parameter::canGo)
         {
             parameter::update_angle();

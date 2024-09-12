@@ -7,7 +7,7 @@
 namespace line
 {
     extern QTRSensors sensor;
-    extern bool enabled;
+    extern float enabled;
 
     extern const int count;
     extern const uint8_t emitterPin;

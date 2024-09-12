@@ -25,10 +25,11 @@ namespace net
 
     void printWifiStatus()
     {
+        IPAddress ip = WiFi.localIP();
+
         Serial.print("SSID: ");
         Serial.println(WiFi.SSID());
 
-        IPAddress ip = WiFi.localIP();
         Serial.print("IP Address: ");
         Serial.println(ip);
 

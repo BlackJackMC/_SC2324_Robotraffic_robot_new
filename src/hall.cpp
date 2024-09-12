@@ -10,7 +10,7 @@ namespace hall
     {
         if (enabled) return;
         Serial.print("Hall: ");
-        pinMode(port, INPUT);
+        pinMode(port, INPUT_PULLUP);
         attachInterrupt(digitalPinToInterrupt(port), callback, RISING); //pretty much it
         enabled = true;
         Serial.println("Done");

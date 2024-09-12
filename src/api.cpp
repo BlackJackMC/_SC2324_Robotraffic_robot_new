@@ -14,6 +14,7 @@ namespace api
             delay(2000);
             err = client.get("/ping");
         }
+        Serial.print(client.responseBody());
         Serial.println(" Connected");
     }
 

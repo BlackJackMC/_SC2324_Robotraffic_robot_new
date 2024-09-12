@@ -26,7 +26,7 @@ namespace parameter
         {"green blink4", true},
         {"yellow", true},
     };
-    int speed, direction = 1, angle;
+    int speed, direction = 1, angle, magnetic = 0;
 
     double setpoint, input, output;
     PID controller(&input, &output, &setpoint, 0, 0, 0, !direction);
@@ -44,6 +44,7 @@ namespace parameter
         data["P"] = controller.GetKp();
         data["I"] = controller.GetKi();
         data["D"] = controller.GetKd();
+        data["magnetic"] = magnetic;
 
         serializeJsonPretty(data, Serial);
         Serial.println();
@@ -65,6 +66,7 @@ namespace parameter
         direction = data["direction"];
         setpoint = data["setpoint"];
         canGo = data["canGo"];
+        magnetic = data["magnetic"];
         controller.SetTunings(data["P"].as<float>(), data["I"].as<float>(), data["D"].as<float>());
         controller.SetControllerDirection(!direction);
     }
@@ -75,24 +77,24 @@ namespace parameter
         controller.Compute();
         mqtt::client.publish("output/parameter/PID/input", String(input).c_str());
         mqtt::client.publish("output/parameter/PID/output", String(output).c_str());
-        angle = map(output, 0, 4000, 0, 150); //Need reconsideration!!
+        angle = constrain(90 + map(output, 0, 4000, 0, 150), 0, 150); //Need reconsideration!!
         steering::turn(angle);
     }
 
-    // For hall callback
     void update_traffic()
     {
+        if (!magnetic) return;
+        magnetic = false;
+        digitalWrite(LED_BUILTIN, HIGH);
         JsonDocument response;
         JsonObject current;
-        api::client.get("/state?name=" + checkpoint[current_checkpoint]);
-        DeserializationError e = deserializeJson(response, api::client.responseBody());
+        DeserializationError e = deserializeJson(response, "[{\"_id\":\"66cb1eeba948bc5e0a6a22e1\",\"name\":\"west\",\"state\":\"green\"}]");
 
         if (e)
-            Serial.println(e.f_str());
-
+            Serial.println("[api]: " + String(e.f_str()));
         current = response.as<JsonArray>()[0];
-
         parameter::canGo = decision[response.as<JsonArray>()[0]["state"]];
+        digitalWrite(LED_BUILTIN, LOW);
     }
 
     // For hall callback
@@ -101,7 +103,8 @@ namespace parameter
         current_checkpoint++;
         if (current_checkpoint > 2)
             current_checkpoint = 1;
-        update_traffic();
+        magnetic = true;
+        // digitalWrite(LED_BUILTIN, HIGH);
     }
 
     void setup()

@@ -27,7 +27,6 @@ namespace setup_sequence
         data["line"] = line::enabled;
         data["steering"] = steering::enabled;
         data["parameter"] = parameter::enabled;
-        data["car"] = enabled;
 
         serializeJsonPretty(data, Serial); // For debug
         Serial.println();

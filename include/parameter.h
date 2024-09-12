@@ -15,7 +15,7 @@ namespace parameter
     extern int current_checkpoint;
     extern const String checkpoint[];
     extern std::map<String, bool> decision;
-    extern int speed, direction, angle;
+    extern int speed, direction, angle, magnetic;
 
     extern double setpoint, input, output;
     extern double Kp, Ki, Kd;

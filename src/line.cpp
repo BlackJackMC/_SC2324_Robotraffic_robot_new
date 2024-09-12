@@ -1,3 +1,4 @@
+#include "setup.h"
 #include "line.h"
 #include <Arduino.h>
 #include <QTRSensors.h>
@@ -5,7 +6,7 @@
 namespace line
 {
     QTRSensors sensor;
-    bool enabled = false;
+    float enabled = 0;
 
     const int count = 5;
     const uint8_t emitterPin = 13;
@@ -26,11 +27,16 @@ namespace line
         for (int i = 0; i < 400; i++)
         {
             sensor.calibrate();
+            if (i % 20 == 0) 
+            {
+                enabled = static_cast<float>(i) / 400;
+                setup_sequence::send_state();
+            }
         }
         Serial.print("<-done ");
 
         digitalWrite(LED_BUILTIN, LOW);
-        enabled = true;
+        enabled = 1.0;
         Serial.println("Done");
     }
 
