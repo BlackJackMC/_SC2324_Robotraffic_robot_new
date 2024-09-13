@@ -13,7 +13,7 @@
 
 namespace parameter
 {
-    bool canGo = false, enabled = false;
+    bool can_go = false, enabled = false;
     int current_checkpoint = 0;
     const String checkpoint[] = {"start", "west", "south"};
     std::map<String, bool> decision = {
@@ -39,18 +39,14 @@ namespace parameter
         data["speed"] = speed;
         data["direction"] = direction;
         data["setpoint"] = setpoint;
-        data["canGo"] = canGo;
+        data["canGo"] = can_go;
         data["angle"] = angle;
         data["P"] = controller.GetKp();
         data["I"] = controller.GetKi();
         data["D"] = controller.GetKd();
         data["magnetic"] = magnetic;
 
-        serializeJsonPretty(data, Serial);
-        Serial.println();
         serializeJson(data, buffer);
-        Serial.println("[parameter] Sending parameters");
-        Serial.println(buffer);
         mqtt::client.publish("input/parameter", buffer.c_str(), true);
     }
 
@@ -65,7 +61,7 @@ namespace parameter
         speed = data["speed"];
         direction = data["direction"];
         setpoint = data["setpoint"];
-        canGo = data["canGo"];
+        can_go = data["canGo"];
         magnetic = data["magnetic"];
         controller.SetTunings(data["P"].as<float>(), data["I"].as<float>(), data["D"].as<float>());
         controller.SetControllerDirection(!direction);
@@ -93,7 +89,7 @@ namespace parameter
         if (e)
             Serial.println("[api]: " + String(e.f_str()));
         current = response.as<JsonArray>()[0];
-        parameter::canGo = decision[response.as<JsonArray>()[0]["state"]];
+        parameter::can_go = decision[response.as<JsonArray>()[0]["state"]];
         digitalWrite(LED_BUILTIN, LOW);
     }
 

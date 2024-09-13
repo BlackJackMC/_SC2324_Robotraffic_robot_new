@@ -63,10 +63,10 @@ serial[[Serial]] --> net[[network]] --> mqtt[[mqtt]] --> setup[[Setup ]] --> mod
 
 mode{Current mode?} --> change_mode{{Change mode}} ==> setup
 
-mode --> |Test| hall_off[Turn off hall sensor] --> canGo{Can go?}
-canGo -->|Yes| angle[update angle] --> Run --> canGo
-canGo --> |No| motor_off[Stop]
+mode --> |Test| hall_off[Turn off hall sensor] --> can_go{Can go?}
+can_go -->|Yes| angle[update angle] --> Run --> can_go
+can_go --> |No| motor_off[Stop]
 
-mode --> |Real| hall(hall) ==> canGo
+mode --> |Real| hall(hall) ==> can_go
 
 ```

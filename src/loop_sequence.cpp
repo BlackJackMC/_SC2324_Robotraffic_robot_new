@@ -16,7 +16,7 @@ namespace loop_sequence::test
     void run()
     {
         parameter::update_traffic();
-        if (parameter::canGo)
+        if (parameter::can_go)
         {
             parameter::update_angle();
             motor::go(parameter::speed, parameter::direction);
@@ -43,13 +43,13 @@ namespace loop_sequence::real
     void wait()
     {
         parameter::update_traffic();
-        if (parameter::canGo)
+        if (parameter::can_go)
             current_step++;
     }
     void run()
     {
         parameter::update_angle();
-        if (parameter::canGo)
+        if (parameter::can_go)
             motor::go(parameter::speed, parameter::direction);
         else
             motor::stop();

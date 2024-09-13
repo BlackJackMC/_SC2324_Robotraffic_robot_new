@@ -11,7 +11,7 @@
 #include "steering.h"
 namespace parameter
 {
-    extern bool canGo, enabled;
+    extern bool can_go, enabled;
     extern int current_checkpoint;
     extern const String checkpoint[];
     extern std::map<String, bool> decision;
