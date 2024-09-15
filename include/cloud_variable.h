@@ -1,7 +1,6 @@
 #pragma once // pls don't crash
 
 #include <Arduino.h>
-#include <UUID.h>
 #include <ArduinoJson.h>
 #include "mqtt.h"
 
@@ -13,7 +12,7 @@ class CloudVar
 public:
     const String topic = "variable/";
 
-    CloudVar();
+    CloudVar(){}
     CloudVar(String name): name(topic + name)
     {
         update();

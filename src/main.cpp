@@ -12,13 +12,14 @@ void setup()
     Serial.begin(115200);
     while (!Serial)
         ; // Wait for serial
-    randomSeed(micros());
+    digitalWrite(LED_BUILTIN, HIGH);
     Serial.println("Serial");
     net::setup();
     mqtt::client.publish("serial", "connected to internet");
     mqtt::setup();
     mqtt::client.publish("serial", "network setup completed");
     setup_sequence::setup();
+    digitalWrite(LED_BUILTIN, LOW);
 }
 
 void loop()
