@@ -9,7 +9,6 @@
 #include "line.h"
 #include "steering.h"
 #include "parameter.h"
-#include "car.h"
 
 namespace setup_sequence
 {
@@ -28,10 +27,7 @@ namespace setup_sequence
         data["steering"] = steering::enabled;
         data["parameter"] = parameter::enabled;
 
-        serializeJsonPretty(data, Serial); // For debug
-        Serial.println();
         serializeJson(data, buffer);
-        Serial.println("[setup] Sending state");
         mqtt::client.publish("output/state", buffer.c_str());
     }
 
@@ -39,7 +35,7 @@ namespace setup_sequence
     {
         if (message == "setup")
         {
-            hall::setup(parameter::update_checkpoint);
+            hall::setup(parameter::update_magnetic);
             count += hall::enabled;
         }
         else if (message == "shutdown")
@@ -122,7 +118,6 @@ namespace setup_sequence
         line(message);
         steering(message);
         parameter(message);
-        loop_controller::reset();
     }
 
     void setup()
@@ -139,13 +134,7 @@ namespace setup_sequence
         mqtt::on("input/control/all", all);
         mqtt::on("input/control/state", [&](String message)
                  { send_state(); });
-        mqtt::on("input/control/car", [&](String message)
-                 {
-                Serial.println("[mqtt] change car mode");
-                loop_controller::change_mode(message);
-                all("shutdown");
-                all("setup"); });
-        send_state(); // Initial statex
+        send_state(); // Initial state
         all("setup"); // Do all setup
 
         enabled = true;

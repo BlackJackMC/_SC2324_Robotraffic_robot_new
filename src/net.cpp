@@ -61,7 +61,7 @@ namespace net
             // Serial.print("Attempting to connect to SSID: ");
             Serial.println(ssid);
             status = WiFi.begin(ssid, pass);
-            delay(10000);
+            delay(15000);
         }
         Serial.println("Connected");
         printWifiStatus();

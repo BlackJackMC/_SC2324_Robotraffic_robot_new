@@ -5,7 +5,6 @@
 #include <map>
 
 #include "net.h"
-#include "api.h"
 
 #include "setup.h"
 #include "loop_controller.h"
