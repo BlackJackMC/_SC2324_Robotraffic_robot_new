@@ -1,17 +1,13 @@
-//For hall sensor
-#ifndef HALL_H
-#define HALL_H
+#pragma once
 
 #include <Arduino.h>
-#include <functional>
+#include "cloud_variable.h"
 
 namespace hall
 {
     extern int port;
-    extern bool enabled;
+    extern CloudVar<bool> enabled;
 
     void setup(voidFuncPtr callback);
     void shutdown();
 }
-
-#endif

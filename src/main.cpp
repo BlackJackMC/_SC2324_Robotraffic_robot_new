@@ -15,24 +15,22 @@ void setup()
     randomSeed(micros());
     Serial.println("Serial");
     net::setup();
+    mqtt::client.publish("serial", "connected to internet");
     mqtt::setup();
-    mqtt::client.publish("serial", "Network setup completed");
+    mqtt::client.publish("serial", "network setup completed");
     setup_sequence::setup();
-    mqtt::client.publish("serial", "Car setup completed");
 }
 
 void loop()
 {
     if (!mqtt::client.connected())
-    {
         mqtt::connect();
-    }
+
     mqtt::client.loop();
-    
-    if (parameter::can_go)
+    if (parameter::can_go.get())
     {
         parameter::update_angle();
-        motor::go(parameter::speed, parameter::direction);
+        motor::go(parameter::speed.get(), parameter::direction.get());
     }
     else
         motor::stop();

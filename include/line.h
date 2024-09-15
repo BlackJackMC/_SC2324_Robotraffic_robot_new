@@ -3,11 +3,12 @@
 
 #include <Arduino.h>
 #include <QTRSensors.h>
+#include "cloud_variable.h"
 
 namespace line
 {
     extern QTRSensors sensor;
-    extern float enabled;
+    extern CloudVar<float> enabled;
 
     extern const int count;
     extern const uint8_t emitterPin;

@@ -1,18 +1,16 @@
 #include "motor.h"
 
-#include <Arduino.h>
-
 namespace motor
 {
     int PWMA = 5;
     int AIN1 = 6;
     int AIN2 = 7;
     int speed = 0;
-    bool enabled = false; // For debugging
+    CloudVar<bool> enabled("motor");
 
     void setup()
     {
-        if (enabled)
+        if (enabled.get())
             return;
         Serial.print("Motor: ");
         pinMode(PWMA, OUTPUT);
@@ -32,7 +30,7 @@ namespace motor
 
     void go(int speed, int direction = 1)
     {
-        if (!enabled)
+        if (!enabled.get())
             return;
         bool pin1 = (direction == 1);
         bool pin2 = !(direction == 1);

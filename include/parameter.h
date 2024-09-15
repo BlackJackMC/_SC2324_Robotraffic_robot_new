@@ -4,30 +4,26 @@
 #include <Arduino.h>
 #include <PID_v1.h>
 #include <map>
+#include "cloud_variable.h"
 
 #include "mqtt.h"
 #include "line.h"
 #include "steering.h"
 namespace parameter
-{
-    extern bool can_go, enabled;
-    namespace checkpoint
-    {
-        extern int current;
-        extern JsonDocument data;
-        extern const String name[];
-        extern std::map<String, bool> decision;
-    };
-    extern int speed, direction, angle;
+{  
+    extern CloudVar<bool> can_go;
+    extern CloudVar<int> speed;
+    extern CloudVar<int> direction;
+    extern CloudVar<float> P;
+    extern CloudVar<float> I;
+    extern CloudVar<float> D;
+    extern CloudVar<int> angle;
+    extern CloudVar<float> input;
+    extern CloudVar<float> output;
+    extern CloudVar<int> setpoint;
+    extern CloudVar<int> checkpoint;
 
-    extern double setpoint, input, output;
-    extern double Kp, Ki, Kd;
-    extern PID controller;
-
-    void get_all();
-    void update_data(String message);
     void update_angle();
-    void update_traffic(String message);
     void update_magnetic();
     void setup();
     void shutdown();

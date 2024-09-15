@@ -1,12 +1,10 @@
-#include "setup.h"
 #include "line.h"
-#include <Arduino.h>
-#include <QTRSensors.h>
+#include "mqtt.h"
 
 namespace line
 {
     QTRSensors sensor;
-    float enabled = 0;
+    CloudVar<float> enabled("line");
 
     const int count = 5;
     const uint8_t emitterPin = 13;
@@ -15,7 +13,7 @@ namespace line
 
     void setup()
     {
-        if (enabled)
+        if (enabled.get() == 1.0)
             return;
         Serial.print("Line: ");
         sensor.setTypeRC();
@@ -29,14 +27,13 @@ namespace line
             sensor.calibrate();
             if (i % 20 == 0) 
             {
-                enabled = static_cast<float>(i) / 400;
-                setup_sequence::send_state();
+                enabled.set(static_cast<float>(i) / 400);
             }
         }
         Serial.print("<-done ");
 
         digitalWrite(LED_BUILTIN, LOW);
-        enabled = 1.0;
+        enabled.set(1.0);
         Serial.println("Done");
     }
 

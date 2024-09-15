@@ -2,14 +2,15 @@
 #define SETUP_H
 
 #include <Arduino.h>
+#include "cloud_variable.h"
+#include "hall.h"
+#include "motor.h"
+#include "line.h"
+#include "steering.h"
+#include "parameter.h"
 
 namespace setup_sequence
 {
-    extern int count;
-    extern const int required;
-    extern bool enabled;
-
-    void send_state();
     void hall(String message);
     void motor(String message);
     void line(String message);

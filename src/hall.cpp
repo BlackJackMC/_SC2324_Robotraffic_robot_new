@@ -1,18 +1,17 @@
 #include "hall.h"
-#include <Arduino.h>
-#include <functional>
+#include "mqtt.h"
 
 namespace hall
 {
     int port = 2;
-    bool enabled = false;
+    CloudVar<bool> enabled("hall");
     void setup(voidFuncPtr callback)
     {
-        if (enabled) return;
+        if (enabled.get()) return;
         Serial.print("Hall: ");
         pinMode(port, INPUT_PULLUP);
         attachInterrupt(digitalPinToInterrupt(port), callback, RISING); //pretty much it
-        enabled = true;
+        enabled.set(true);
         Serial.println("Done");
         return;
     }
@@ -20,6 +19,6 @@ namespace hall
     void shutdown()
     {
         detachInterrupt(digitalPinToInterrupt(port));
-        enabled = false;
+        enabled.set(false);
     }
 }
