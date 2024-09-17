@@ -1,16 +1,14 @@
 #include "steering.h"
-#include <Arduino.h>
-#include <Servo.h>
 
 namespace steering
 {
     const int pin = 3;
-    bool enabled = false;
+    CloudVar<bool>enabled("servo");
     Servo servo;
 
     void setup()
     {
-        if (enabled)
+        if (enabled.get())
             return;
 
         Serial.print("Servo: ");

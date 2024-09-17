@@ -65,5 +65,6 @@ namespace net
         }
         Serial.println("Connected");
         printWifiStatus();
+        delay(5000);
     }
 }

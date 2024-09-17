@@ -1,7 +1,7 @@
 #pragma once
 
 #include <Arduino.h>
-#include "cloud_variable.h"
+#include "cloud_var.h"
 namespace motor 
 {
     extern int PWMA;

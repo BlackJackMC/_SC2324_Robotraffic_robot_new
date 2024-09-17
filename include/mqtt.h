@@ -1,11 +1,11 @@
-#ifndef MQTT_H
-#define MQTT_H
+#pragma once
 
-#include <map>
 #include <functional>
+#include <map>
 
 #include <Arduino.h>
 #include <PubSubClient.h>
+#include <ArduinoJson.h>
 
 
 #include "env.h"
@@ -17,12 +17,12 @@ namespace mqtt
     
     extern std::map<String, callback_t> callback;
     extern PubSubClient client;
+    extern String id;
     extern bool enabled;
 
     void handler(char *topic, byte *buffer, size_t length);
     void on(String topic, callback_t f);
+    void publish(String topic, String message);
     void connect();
     void setup();
 }
-
-#endif

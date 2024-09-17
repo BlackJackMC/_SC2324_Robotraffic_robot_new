@@ -6,23 +6,32 @@ namespace mqtt
 
     std::map<String, callback_t> callback;
     PubSubClient client(net::wifi);
+    String id = "";
     bool enabled = false;
 
     void handler(char *topic, byte *buffer, size_t length)
     {
         String temp((char *)buffer, length);
         auto loc = callback.find(String(topic));
+        JsonDocument data;
+        DeserializationError e = deserializeJson(data, temp);
+
+        if (e)
+        {
+            Serial.print("Error while parsing incoming message: ");
+            Serial.println(e.f_str());
+            return;
+        }
+
         Serial.println("[mqtt][handler]: " + String(topic) + "->" + temp);
 
+        if (data["id"] == id)
+            return;
+
         if (loc != callback.end())
-        {
-            loc->second(temp);
-        }
+            loc->second(data["message"]);
         else
-        {
-            Serial.print("[mqtt] No callback registered for topic: ");
-            Serial.println(String(topic));
-        }
+            Serial.println("[mqtt] No callback registered for topic: " + String(topic));
     }
 
     void on(String topic, callback_t f)
@@ -40,12 +49,23 @@ namespace mqtt
         }
     }
 
+    void publish(String topic, String message)
+    {
+        JsonDocument data;
+        String buffer;
+        data["id"] = id;
+        data["message"] = message;
+        serializeJson(data, buffer);
+        client.publish(topic.c_str(), buffer.c_str());
+    }
+
     void connect()
     {
         client.disconnect();
         while (!client.connected())
         {
-            if (client.connect(("Arduino Uno R4 - " + String(random(0xffff), HEX)).c_str(), MQTT_USERNAME, MQTT_PASS))
+            id = ("Arduino Uno R4 - " + String(random(0xffff), HEX));
+            if (client.connect(id.c_str(), MQTT_USERNAME, MQTT_PASS))
                 // if (client.connect(("Arduino Uno R4 - " + String(random(0xffff), HEX)).c_str()))
                 Serial.println(" Connected");
             else
