@@ -11,4 +11,6 @@ namespace cloud
 
     //Push buffer to cloud and clear buffer
     void push();
+
+    void loop();
 }

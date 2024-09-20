@@ -7,7 +7,7 @@ namespace mqtt
     std::map<String, callback_t> callback;
     PubSubClient client(net::wifi);
     String id = "";
-    bool enabled = false;
+    int last_broker_index = 0;
 
     void handler(char *topic, byte *buffer, size_t length)
     {
@@ -62,27 +62,32 @@ namespace mqtt
     void connect()
     {
         client.disconnect();
+        id = ("Arduino Uno R4 - " + String(random(0xffff), HEX));
         while (!client.connected())
         {
-            id = ("Arduino Uno R4 - " + String(random(0xffff), HEX));
+            // Cycle through every mqtt broker save the last mqtt broker that was attempted to connect
+            auto mqtt = MQTT_LIST[last_broker_index];
+            Serial.print(mqtt.first);
+            Serial.print(" ");
+            client.setServer(mqtt.first, mqtt.second);
             if (client.connect(id.c_str(), MQTT_USERNAME, MQTT_PASS))
-                // if (client.connect(("Arduino Uno R4 - " + String(random(0xffff), HEX)).c_str()))
-                Serial.println(" Connected");
+                break;
             else
-            {
-                Serial.print(client.state());
-                Serial.print(" Retrying ");
-                delay(5000);
-            }
+                Serial.println(client.state());
+            
+            delay(5000);
+
+            last_broker_index = (last_broker_index + 1) % MQTT_LIST.size();
         }
+
+        Serial.println("Connected");
     }
 
     void setup()
     {
         Serial.print("[mqtt]:");
-        client.setServer(MQTT_URL, MQTT_PORT);
+        client.setStream(Serial);
         client.setCallback(handler);
         connect();
-        enabled = true;
     }
 }

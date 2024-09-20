@@ -22,4 +22,9 @@ namespace cloud
 
         buffer.clear();
     }
+
+    void loop()
+    {
+        push();
+    }
 }

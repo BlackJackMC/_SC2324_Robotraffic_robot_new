@@ -2,8 +2,6 @@
 
 namespace net
 {
-    const char *ssid = WIFI_SSID;
-    const char *pass = WIFI_PASS;
     int status = WL_IDLE_STATUS;
 
     WiFiSSLClient wifi;
@@ -41,30 +39,32 @@ namespace net
 
     void setup()
     {
+
         Serial.print("Network: ");
         if (WiFi.status() == WL_NO_MODULE)
         {
             Serial.println("Wifi module not detected");
-            while (true)
-                ;
+            while (true);
         }
-        String fv = WiFi.firmwareVersion();
-        if (fv < WIFI_FIRMWARE_LATEST_VERSION)
-        {
+
+        if (WiFi.firmwareVersion() < WIFI_FIRMWARE_LATEST_VERSION)
             Serial.println("Please upgrade the firmware");
-        }
 
         wifi.setCACert(CERTIFICATE);
 
         while (status != WL_CONNECTED)
         {
-            // Serial.print("Attempting to connect to SSID: ");
-            Serial.println(ssid);
-            status = WiFi.begin(ssid, pass);
-            delay(15000);
+            // Try to connect to one of the wifi
+            for (const auto &wifi : WIFI_LIST)
+            {
+                Serial.println(wifi.first);
+                status = WiFi.begin(wifi.first, wifi.second);
+                delay(15000);
+                if (status == WL_CONNECTED)
+                    break;
+            }
         }
+
         Serial.println("Connected");
-        printWifiStatus();
-        delay(5000);
     }
 }

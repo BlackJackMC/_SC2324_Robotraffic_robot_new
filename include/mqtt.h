@@ -18,7 +18,7 @@ namespace mqtt
     extern std::map<String, callback_t> callback;
     extern PubSubClient client;
     extern String id;
-    extern bool enabled;
+    extern int last_broker_index;
 
     void handler(char *topic, byte *buffer, size_t length);
     void on(String topic, callback_t f);
