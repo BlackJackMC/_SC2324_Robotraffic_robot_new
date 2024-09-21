@@ -62,7 +62,7 @@ namespace mqtt
     void connect()
     {
         client.disconnect();
-        id = ("Arduino Uno R4 - " + String(random(0xffff), HEX));
+        id = ("Arduino Uno R4 - " + String(random(0xffff), HEX)) + String(random(0xffff), HEX);
         while (!client.connected())
         {
             // Cycle through every mqtt broker save the last mqtt broker that was attempted to connect
@@ -70,12 +70,18 @@ namespace mqtt
             Serial.print(mqtt.first);
             Serial.print(" ");
             client.setServer(mqtt.first, mqtt.second);
-            if (client.connect(id.c_str(), MQTT_USERNAME, MQTT_PASS))
-                break;
-            else
-                Serial.println(client.state());
+
+            for (int i = 0; i < 5; i++) // Try to connect for 5 attempts
+            {
+                if (client.connect(id.c_str(), MQTT_USERNAME, MQTT_PASS))
+                    break;
+                else
+                    Serial.print(client.state());
+                    Serial.print(" ");
+                delay(5000);
+            }
+
             
-            delay(5000);
 
             last_broker_index = (last_broker_index + 1) % MQTT_LIST.size();
         }

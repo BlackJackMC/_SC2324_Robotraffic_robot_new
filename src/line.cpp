@@ -4,16 +4,17 @@
 namespace line
 {
     QTRSensors sensor;
-    CloudVar<float> enabled("line");
+    CloudVar<float> enabled("line", Permission::Read);
+    CloudVar<String> command("line_enable", Permission::ReadWrite);
 
     const int count = 5;
     const uint8_t emitterPin = 13;
     const uint8_t pin[] = {8, 9, 10, 11, 12};
     uint16_t value[5];
 
-    void setup()
+    void start()
     {
-        if (enabled.get() == 1.0)
+        if (enabled == 1.0)
             return;
         Serial.print("Line: ");
         sensor.setTypeRC();
@@ -27,18 +28,27 @@ namespace line
             sensor.calibrate();
             if (i % 20 == 0) 
             {
-                enabled.set(static_cast<float>(i) / 400);
+                enabled = static_cast<float>(i) / 400;
             }
         }
         Serial.print("<-done ");
 
         digitalWrite(LED_BUILTIN, LOW);
-        enabled.set(1.0);
+        enabled = 1.0;
         Serial.println("Done");
+    }
+
+    void setup()
+    {
+        command.set_callback([&](){
+            if (command == "ON" and enabled != 1.0) start();
+            else if (command == "OFF" and enabled == 1.0) shutdown();
+        });
+        start();
     }
 
     void shutdown()
     {
-        enabled = false;
+        enabled = 0;
     }
 }

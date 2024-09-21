@@ -5,6 +5,12 @@
 #include "cloud.h"
 #include "mqtt.h"
 
+enum class Permission
+{
+    Read,
+    ReadWrite
+};
+
 template <typename T>
 class CloudVar
 {
@@ -12,24 +18,19 @@ public:
     const String topic PROGMEM = "variable/";
     using callback_t = std::function<void(void)>;
 
-    enum var_t
-    {
-        READ_ONLY,
-        READ_WRITE
-    };
-
     CloudVar();
     CloudVar(String name, callback_t on_change);
-    CloudVar(String name, T init_val, var_t type);
+    CloudVar(String name, Permission type, callback_t on_change = [](){});
+    CloudVar(String name, T init_val, Permission type);
     CloudVar(String name, T init_val, callback_t on_change);
-    CloudVar(String name, T init_val = T(), var_t type = READ_WRITE, callback_t on_change = []() {});
+    CloudVar(String name, T init_val = T(), Permission type = Permission::ReadWrite, callback_t on_change = []() {});
 
     void set_name(String name);
     void set_initial_value(T init_val);
     void set_callback(callback_t on_change);
-    void set_type(var_t type);
+    void set_type(Permission type);
 
-    explicit operator T() const
+    operator T() const
     {
         return value;
     }
@@ -42,13 +43,17 @@ public:
 
 private:
     T value;
-    var_t type;
+    T last_sent;
+    Permission type;
     callback_t on_change;
 
     mqtt::callback_t update = [this](String message)
     {
-        if (type == READ_ONLY)
+        if (type == Permission::Read)
+        {
+            Serial.println(F("[cloud]: Read-only, can't update"));
             return;
+        }
 
         JsonDocument temp;
         temp[F("temp")] = message;
@@ -73,23 +78,26 @@ template <typename T>
 CloudVar<T>::CloudVar() {}
 
 template <typename T>
-CloudVar<T>::CloudVar(String name, callback_t on_change) : CloudVar(name, T(), READ_WRITE, on_change) {}
+CloudVar<T>::CloudVar(String name, callback_t on_change) : CloudVar(name, T(), Permission::ReadWrite, on_change) {}
 
 template <typename T>
-CloudVar<T>::CloudVar(String name, T init_val, var_t type) : CloudVar(name, init_val, type) {}
+CloudVar<T>::CloudVar(String name, Permission type, callback_t on_change) : CloudVar(name, T(), type, on_change) {}
 
 template <typename T>
-CloudVar<T>::CloudVar(String name, T init_val, callback_t on_change) : CloudVar(name, init_val, READ_WRITE, on_change) {}
+CloudVar<T>::CloudVar(String name, T init_val, Permission type) : CloudVar(name, init_val, type) {}
+
+template <typename T>
+CloudVar<T>::CloudVar(String name, T init_val, callback_t on_change) : CloudVar(name, init_val, Permission::ReadWrite, on_change) {}
 
 template <class T>
-CloudVar<T>::CloudVar(String name, T init_val, var_t type, callback_t on_change)
+CloudVar<T>::CloudVar(String name, T init_val, Permission type, callback_t on_change)
 {
     this->name = topic + name;
     this->value = init_val;
     this->type = type;
     this->on_change = on_change;
 
-    if (type == READ_WRITE)
+    if (type == Permission::ReadWrite)
     {
         cloud::add(this->name, update);
     }
@@ -114,7 +122,7 @@ void CloudVar<T>::set_callback(callback_t on_change)
 }
 
 template <typename T>
-void CloudVar<T>::set_type(var_t type)
+void CloudVar<T>::set_type(Permission type)
 {
     this->type = type;
 }
@@ -129,7 +137,11 @@ template <typename T>
 void CloudVar<T>::set(T new_val)
 {
     value = new_val;
-    mqtt::publish(name.c_str(), String(value).c_str());
+    if (last_sent != value)
+    {
+        mqtt::publish(name.c_str(), String(value).c_str());
+        last_sent = value;
+    }
 }
 
 template <typename T>

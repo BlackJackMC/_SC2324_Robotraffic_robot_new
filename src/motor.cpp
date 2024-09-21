@@ -6,11 +6,12 @@ namespace motor
     int AIN1 = 6;
     int AIN2 = 7;
     int speed = 0;
-    CloudVar<bool> enabled("motor");
+    CloudVar<bool> enabled("motor", Permission::Read);
+    CloudVar<String> command("motor_enable", Permission::ReadWrite);
 
-    void setup()
+    void start()
     {
-        if (enabled.get())
+        if (enabled)
             return;
         Serial.print("Motor: ");
         pinMode(PWMA, OUTPUT);
@@ -18,6 +19,15 @@ namespace motor
         pinMode(AIN2, OUTPUT);
         enabled = true;
         Serial.println("Done");
+    }
+
+    void setup()
+    {
+        command.set_callback([&](){
+            if (command == "ON" and !enabled) start();
+            else if (command == "OFF" and enabled) shutdown();
+        });
+        start();
     }
 
     void stop() { analogWrite(PWMA, 0); }

@@ -3,8 +3,8 @@
 namespace hall
 {
     int port = 2;
-    CloudVar<bool> enabled("hall");
-    CloudVar<bool> command_enable("hall_enable");
+    CloudVar<bool> enabled("hall", Permission::Read);
+    CloudVar<String> command("hall_enable", Permission::ReadWrite);
 
     void start(voidFuncPtr callback)
     {
@@ -17,16 +17,12 @@ namespace hall
 
     void setup(voidFuncPtr callback)
     {
-        enabled.set_type(enabled.READ_ONLY);
-        command_enable.set_type(command_enable.READ_WRITE);
-
-        command_enable.set_callback([&](){
-            Serial.println("[hall]: Received");
-            Serial.println("[hall]: enabled = " + String(command_enable.get()));
-            //After enabled has changed, meaning "1" is not enabled and the command is to enable it
-            if (command_enable.get() xor enabled.get()) start(callback);
-            else shutdown();
+        command.set_callback([&](){
+            Serial.println("[hall]: Received " + String(command));
+            if (command == "ON" and !enabled) start(callback);
+            else if (command == "OFF" and enabled) shutdown();
         });
+
         start(callback);
         return;
     }

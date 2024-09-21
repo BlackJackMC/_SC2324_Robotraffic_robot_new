@@ -3,7 +3,13 @@
 #include "net.h"
 #include "mqtt.h"
 #include "cloud.h"
-#include "setup.h"
+
+#include "hall.h"
+#include "line.h"
+#include "motor.h"
+#include "steering.h"
+
+#include "parameter.h"
 
 void setup()
 {
@@ -16,7 +22,13 @@ void setup()
     net::setup();
     mqtt::setup();
     mqtt::publish("serial", "network setup completed");
-    setup_sequence::setup();
+    
+    hall::setup(parameter::update_magnetic);
+    line::setup();
+    motor::setup();
+    steering::setup();
+
+    mqtt::publish("serial", "car setup completed");
 }
 
 void loop()

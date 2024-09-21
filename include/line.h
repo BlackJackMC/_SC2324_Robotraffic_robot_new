@@ -9,6 +9,7 @@ namespace line
 {
     extern QTRSensors sensor;
     extern CloudVar<float> enabled;
+    extern CloudVar<String> command;
 
     extern const int count;
     extern const uint8_t emitterPin;
