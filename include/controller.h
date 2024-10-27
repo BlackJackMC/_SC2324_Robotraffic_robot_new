@@ -9,9 +9,8 @@
 #include "mqtt.h"
 #include "line.h"
 #include "steering.h"
-namespace parameter
+namespace controller
 {  
-    extern CloudVar<bool> can_go;
     extern CloudVar<int> speed;
     extern CloudVar<int> direction;
     extern CloudVar<float> P;
@@ -21,12 +20,12 @@ namespace parameter
     extern CloudVar<float> input;
     extern CloudVar<float> output;
     extern CloudVar<int> setpoint;
-    extern CloudVar<int> checkpoint;
 
     void update_angle();
-    void update_magnetic();
+    void update_hall();
     void setup();
     void shutdown();
+    void loop();
 }
 
 #endif

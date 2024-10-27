@@ -8,8 +8,6 @@ namespace motor
     extern int AIN1;
     extern int AIN2;
     extern int speed;
-    extern CloudVar<bool> enabled;
-    extern CloudVar<String> command;
 
     void setup();
     void stop();

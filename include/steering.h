@@ -8,8 +8,6 @@
 namespace steering
 {
     extern const int pin;
-    extern CloudVar<bool> enabled;
-    extern CloudVar<String> command;
     extern Servo servo;
 
     void setup();

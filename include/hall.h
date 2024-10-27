@@ -5,11 +5,8 @@
 
 namespace hall
 {
-    extern int port;
-    extern CloudVar<bool> enabled;
-    extern CloudVar<String> command;
-
-    void start(voidFuncPtr callback);
+    extern int pin;
+    
     void setup(voidFuncPtr callback);
     void shutdown();
 }

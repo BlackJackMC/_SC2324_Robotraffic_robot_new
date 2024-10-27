@@ -9,7 +9,7 @@
 #include "motor.h"
 #include "steering.h"
 
-#include "parameter.h"
+#include "controller.h"
 
 void setup()
 {
@@ -20,15 +20,12 @@ void setup()
     Serial.println(F("Serial"));
     randomSeed(micros());
     net::setup();
-    mqtt::setup();
-    mqtt::publish("serial", "network setup completed");
-    
-    hall::setup(parameter::update_magnetic);
+    mqtt::setup();    
+    hall::setup(controller::update_hall);
     line::setup();
     motor::setup();
     steering::setup();
-
-    mqtt::publish("serial", "car setup completed");
+    controller::setup();
 }
 
 void loop()
@@ -40,5 +37,6 @@ void loop()
 
     cloud::loop();
     mqtt::client.loop();
+    controller::loop();
 }
 
