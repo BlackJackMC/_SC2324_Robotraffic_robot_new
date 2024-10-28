@@ -1,6 +1,6 @@
-#include "cloud.h"
+#include "cloud_subscriber.h"
 
-namespace cloud
+namespace cloud_subscriber
 {
     std::map<String, mqtt::callback_t> buffer;
 
@@ -16,9 +16,7 @@ namespace cloud
         if (!mqtt::client.connected() or buffer.empty()) return;
 
         for (const auto& i: buffer)
-        {
             mqtt::on(i.first, i.second);
-        }
 
         buffer.clear();
     }

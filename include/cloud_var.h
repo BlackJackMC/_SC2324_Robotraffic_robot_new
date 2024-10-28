@@ -1,21 +1,84 @@
 #pragma once
 
-#include <Arduino.h>
-#include <ArduinoJson.h>
-#include "cloud.h"
+#include "cloud_subscriber.h"
 #include "mqtt.h"
 
-enum class Permission
+class CloudVarBase
 {
-    Read, // Read-only from cloud
-    Write, // Read-only from client
-    ReadWrite // Read/write from both
+public:
+    enum class Permission
+    {
+        Read,     // Read-only from cloud
+        Write,    // Read-only from client
+        ReadWrite // Read/write from both
+    };
+
+    using callback_t = std::function<void(void)>;
+
+    CloudVarBase() = default;
+    CloudVarBase(const String name, Permission type = Permission::ReadWrite, callback_t on_change = []() {})
+        : name(name), type(type), on_change(on_change) {}
+
+    virtual ~CloudVarBase() = default;
+
+    CloudVarBase& set_name(String name)
+    {
+        this->name = name;
+        return *this;
+    }
+    CloudVarBase& set_callback(callback_t on_change)
+    {
+        this->on_change = on_change;
+        return *this;
+    }
+    CloudVarBase& set_type(Permission type)
+    {
+        this->type = type;
+        return *this;
+    }
+
+protected:
+    String name;
+    Permission type = Permission::ReadWrite;
+    callback_t on_change;
+
+    virtual void update_from_cloud(String message) = 0;
+};
+
+class CloudVarString: public CloudVarBase
+{
+private:
+    String local, cloud;
+
+    CloudVarString(const String name, String init_val="", Permission type = Permission::ReadWrite, callback_t on_change = []() {}):
+        CloudVarBase(name, type, on_change), local(init_val), cloud(init_val) {}
+
+    CloudVarString& set_initial_value(String init_val)
+    {
+        local = init_val;
+        cloud = init_val;
+        return *this;
+    }
+
+    void update_from_cloud(String message) override 
+    {
+        local = message;
+
+        if (on_change) on_change();
+    }
 };
 
 template <typename T>
 class CloudVar
 {
 public:
+    enum class Permission
+    {
+        Read,     // Read-only from cloud
+        Write,    // Read-only from client
+        ReadWrite // Read/write from both
+    };
+
     using callback_t = std::function<void(void)>;
 
     CloudVar() = default;
@@ -50,12 +113,9 @@ private:
         else
             value = message;
 
-
         if (on_change)
             on_change();
     };
-
-    void register_update_callback();
 };
 
 template <typename T>
@@ -71,7 +131,7 @@ CloudVar<T>::CloudVar(String name, T init_val, Permission type, callback_t on_ch
 template <typename T>
 void CloudVar<T>::set_name(String name)
 {
-    this->name = String(F("variable/")) + name;
+    this->name = name;
 }
 
 template <typename T>
@@ -112,13 +172,4 @@ template <typename T>
 void CloudVar<T>::operator=(T new_val)
 {
     set(new_val);
-}
-
-template <typename T>
-void CloudVar<T>::register_update_callback()
-{
-    if (type == Permission::ReadWrite)
-    {
-        cloud::add(this->name, update);
-    }
 }
