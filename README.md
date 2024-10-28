@@ -35,38 +35,3 @@
 
 ## All topic
 
-- input
-  - parameter: update_data
-    - all: get_all
-  - control
-    - hall: setup
-    - motor: setup
-    - line: setup
-    - steering: setup
-    - all: setup all
-    - car: change mode (test mode / real mode)
-- output
-  - parameter
-    - PID
-      - input: double
-      - output: double
-  - state: sensors state
-
-## Control flow
-
-```mermaid
-graph TD
-serial[[Serial]] --> net[[network]] --> mqtt[[mqtt]] --> setup[[Setup ]] --> mode
-
-
-
-
-mode{Current mode?} --> change_mode{{Change mode}} ==> setup
-
-mode --> |Test| hall_off[Turn off hall sensor] --> can_go{Can go?}
-can_go -->|Yes| angle[update angle] --> Run --> can_go
-can_go --> |No| motor_off[Stop]
-
-mode --> |Real| hall(hall) ==> can_go
-
-```
