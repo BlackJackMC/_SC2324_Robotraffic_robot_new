@@ -26,6 +26,7 @@ void setup()
     motor::setup();
     steering::setup();
     controller::setup();
+    traffic_controller::setup();
     cloud::setup();
 }
 

@@ -23,8 +23,6 @@ namespace mqtt
             return;
         }
 
-        Serial.println("[mqtt][handler]: " + String(topic) + "->" + temp);
-
         if (data["id"] == id)
             return;
 

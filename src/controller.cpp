@@ -4,26 +4,18 @@ namespace controller
 {
     int speed;
     int direction;
-    float P;
-    float I;
-    float D;
+    double P, I, D, input, output, setpoint;
     int angle;
-    float input;
-    float output;
-    int setpoint;
 
-    double local_input, local_output, local_setpoint;
     bool checkpoint_passed = false;
     
-    PID pid(&local_input, &local_output, &local_setpoint, P, I, D, !direction);
+    PID pid(&input, &output, &setpoint, P, I, D, !direction);
 
 
     void update_angle()
     {
-        local_input = line::sensor.readLineBlack(line::value);
-        input = local_input;
+        input = line::sensor.readLineBlack(line::value);
         pid.Compute();
-        output = local_output;
 
         angle = constrain(angle + map(output, 0, 4000, 0, 150), 0, 150);
     }
@@ -53,5 +45,14 @@ namespace controller
     {
         pid.SetMode(AUTOMATIC);
         pid.SetOutputLimits(0, 4000);
+
+        cloud::add(P, Permission::ReadWrite, [&](){Serial.println("[pid]: " + String(P)); pid.SetTunings(P, I, D); });
+        cloud::add(I, Permission::ReadWrite, [&](){Serial.println("[pid]: " + String(I)); pid.SetTunings(P, I, D); });
+        cloud::add(D, Permission::ReadWrite, [&](){Serial.println("[pid]: " + String(D)); pid.SetTunings(P, I, D); });
+        cloud::add(input, Permission::Read);
+        cloud::add(output, Permission::Read);
+        cloud::add(speed, Permission::ReadWrite);
+        cloud::add(direction, Permission::ReadWrite);
+        cloud::add(angle, Permission::ReadWrite);
     }
 }

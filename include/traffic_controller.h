@@ -1,6 +1,6 @@
 #pragma once
 
-#include "cloud_var.h"
+#include "cloud.h"
 #include <map>
 #include <array>
 
@@ -12,4 +12,5 @@ namespace traffic_controller
 
     void next_checkpoint();
     bool allow();
+    void setup();
 };

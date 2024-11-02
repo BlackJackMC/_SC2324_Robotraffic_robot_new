@@ -111,6 +111,30 @@ public:
     String stringify() const override { return String(local); }
 };
 
+class CloudVarDouble : public CloudVarBase
+{
+public:
+    double &local, cloud;
+
+    CloudVarDouble(const String name, double &local, Permission type = Permission::ReadWrite, callback_t on_change = []() {}) : CloudVarBase(name, type, on_change), local(local), cloud(local) {}
+
+    void update_from_cloud(String message) override
+    {
+        cloud = message.toDouble();
+        Serial.println("[cloud]: Update(cloud) " + name + " to " + String(cloud));
+
+        if (on_change)
+            on_change();
+    }
+
+    void update_to_local() override { 
+        local = cloud; 
+    }
+    void update_to_cloud() override { cloud = local; }
+    bool different_from_cloud() override { return local != cloud; }
+    String stringify() const override { return String(local); }
+};
+
 class CloudVarBool : public CloudVarBase
 {
 public:

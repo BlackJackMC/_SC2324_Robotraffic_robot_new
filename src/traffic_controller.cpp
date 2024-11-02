@@ -26,4 +26,10 @@ namespace traffic_controller
     {
         return decisions[traffic_light_list[counter]];
     }
+
+    void setup()
+    {
+        for (int i = 0; i < traffic_light_list.size(); i++)
+            cloud::add(traffic_light_list[i], Permission::ReadWrite);
+    }
 }
