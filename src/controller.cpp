@@ -1,27 +1,21 @@
 #include "controller.h"
-#include "cloud_var.h"
-#include "mqtt.h"
-#include "line.h"
-#include "steering.h"
-#include "motor.h"
-#include "traffic_controller.h"
 
 namespace controller
 {
-    CloudVar<int> speed("speed");
-    CloudVar<int> direction("direction");
-    CloudVar<float> P("P");
-    CloudVar<float> I("I");
-    CloudVar<float> D("D");
-    CloudVar<int> angle("angle");
-    CloudVar<float> input("input");
-    CloudVar<float> output("output");
-    CloudVar<int> setpoint("setpoint");
+    int speed;
+    int direction;
+    float P;
+    float I;
+    float D;
+    int angle;
+    float input;
+    float output;
+    int setpoint;
 
     double local_input, local_output, local_setpoint;
     bool checkpoint_passed = false;
     
-    PID pid(&local_input, &local_output, &local_setpoint, P.get(), I.get(), D.get(), !direction.get());
+    PID pid(&local_input, &local_output, &local_setpoint, P, I, D, !direction);
 
 
     void update_angle()
@@ -59,10 +53,5 @@ namespace controller
     {
         pid.SetMode(AUTOMATIC);
         pid.SetOutputLimits(0, 4000);
-
-        angle.set_callback([&](){ steering::turn(angle); });
-        P.set_callback([&](){ pid.SetTunings(P, I, D); });
-        I.set_callback([&](){ pid.SetTunings(P, I, D); });
-        D.set_callback([&](){ pid.SetTunings(P, I, D); });
     }
 }

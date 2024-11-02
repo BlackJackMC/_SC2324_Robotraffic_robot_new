@@ -1,175 +1,133 @@
 #pragma once
 
-#include "cloud_subscriber.h"
 #include "mqtt.h"
+
+enum class Permission
+{
+    Read,     // Read-only from cloud
+    ReadWrite // Read/write from cloud
+};
+
+using callback_t = std::function<void(void)>;
+
 
 class CloudVarBase
 {
 public:
-    enum class Permission
-    {
-        Read,     // Read-only from cloud
-        Write,    // Read-only from client
-        ReadWrite // Read/write from both
-    };
-
-    using callback_t = std::function<void(void)>;
 
     CloudVarBase() = default;
-    CloudVarBase(const String name, Permission type = Permission::ReadWrite, callback_t on_change = []() {})
-        : name(name), type(type), on_change(on_change) {}
+    CloudVarBase(const String name, Permission type = Permission::ReadWrite, callback_t on_change = []() {}) : name(name), type(type), on_change(on_change) {}
 
     virtual ~CloudVarBase() = default;
 
-    CloudVarBase& set_name(String name)
+    CloudVarBase &set_name(String name)
     {
         this->name = name;
         return *this;
     }
-    CloudVarBase& set_callback(callback_t on_change)
+    CloudVarBase &set_callback(callback_t on_change)
     {
         this->on_change = on_change;
         return *this;
     }
-    CloudVarBase& set_type(Permission type)
+    CloudVarBase &set_type(Permission type)
     {
         this->type = type;
         return *this;
     }
 
-protected:
+    virtual void update_from_cloud(String message) = 0;
+    virtual void update_to_cloud() = 0;
+    virtual void update_to_local() = 0;
+    virtual bool different_from_cloud() = 0;
+
+    virtual String stringify() const = 0;
+    
     String name;
     Permission type = Permission::ReadWrite;
     callback_t on_change;
-
-    virtual void update_from_cloud(String message) = 0;
 };
 
-class CloudVarString: public CloudVarBase
-{
-private:
-    String local, cloud;
-
-    CloudVarString(const String name, String init_val="", Permission type = Permission::ReadWrite, callback_t on_change = []() {}):
-        CloudVarBase(name, type, on_change), local(init_val), cloud(init_val) {}
-
-    CloudVarString& set_initial_value(String init_val)
-    {
-        local = init_val;
-        cloud = init_val;
-        return *this;
-    }
-
-    void update_from_cloud(String message) override 
-    {
-        local = message;
-
-        if (on_change) on_change();
-    }
-};
-
-template <typename T>
-class CloudVar
+class CloudVarString : public CloudVarBase
 {
 public:
-    enum class Permission
+    String &local, cloud;
+
+    CloudVarString(const String name, String &local, Permission type = Permission::ReadWrite, callback_t on_change = []() {}) : CloudVarBase(name, type, on_change), local(local), cloud(local) {}
+
+    void update_from_cloud(String message) override
     {
-        Read,     // Read-only from cloud
-        Write,    // Read-only from client
-        ReadWrite // Read/write from both
-    };
-
-    using callback_t = std::function<void(void)>;
-
-    CloudVar() = default;
-    CloudVar(String name, T init_val = T(), Permission type = Permission::ReadWrite, callback_t on_change = []() {});
-
-    void set_name(String name);
-    void set_initial_value(T init_val);
-    void set_callback(callback_t on_change);
-    void set_type(Permission type);
-
-    operator T() const { return value; }
-    T get() const { return value; }
-    void set(T new_val);
-    void operator=(T new_val);
-
-private:
-    String name;
-    T value = T();
-    T last_sent = T();
-    Permission type = Permission::ReadWrite;
-    callback_t on_change;
-
-    mqtt::callback_t update = [this](String message)
-    {
-        if (type == Permission::Read)
-            return;
-
-        if constexpr (std::is_same<T, bool>::value)
-            value = (message == "true");
-        else if constexpr (std::is_arithmetic<T>::value)
-            value = message.toFloat();
-        else
-            value = message;
+        cloud = message;
 
         if (on_change)
             on_change();
-    };
+    }
+
+    void update_to_local() override { local = cloud; }
+    void update_to_cloud() override { cloud = local; }
+    bool different_from_cloud() override { return local != cloud; }
+    String stringify() const override { return local; }
 };
 
-template <typename T>
-CloudVar<T>::CloudVar(String name, T init_val, Permission type, callback_t on_change)
+class CloudVarInt : public CloudVarBase
 {
-    set_name(name);
-    set_type(type);
-    set_initial_value(init_val);
-    set_callback(on_change);
-    register_update_callback();
-}
+public:
+    int &local, cloud;
 
-template <typename T>
-void CloudVar<T>::set_name(String name)
-{
-    this->name = name;
-}
+    CloudVarInt(const String name, int &local, Permission type = Permission::ReadWrite, callback_t on_change = []() {}) : CloudVarBase(name, type, on_change), local(local), cloud(local) {}
 
-template <typename T>
-void CloudVar<T>::set_initial_value(T init_val)
-{
-    value = init_val;
-    last_sent = init_val;
-}
-
-template <typename T>
-void CloudVar<T>::set_callback(callback_t on_change)
-{
-    this->on_change = on_change;
-}
-
-template <typename T>
-void CloudVar<T>::set_type(Permission type)
-{
-    this->type = type;
-}
-
-template <typename T>
-void CloudVar<T>::set(T new_val)
-{
-    if (type == Permission::Write)
-        return;
-
-    value = new_val;
-
-    if (last_sent != value)
+    void update_from_cloud(String message) override
     {
-        mqtt::publish(name.c_str(), String(value).c_str());
-        last_sent = value;
-    }
-}
+        cloud = message.toInt();
 
-template <typename T>
-void CloudVar<T>::operator=(T new_val)
+        if (on_change)
+            on_change();
+    }
+
+    void update_to_local() override { local = cloud; }
+    void update_to_cloud() override { cloud = local; }
+    bool different_from_cloud() override { return local != cloud; }
+    String stringify() const override { return String(local); }
+};
+
+class CloudVarFloat : public CloudVarBase
 {
-    set(new_val);
-}
+public:
+    float &local, cloud;
+
+    CloudVarFloat(const String name, float &local, Permission type = Permission::ReadWrite, callback_t on_change = []() {}) : CloudVarBase(name, type, on_change), local(local), cloud(local) {}
+
+    void update_from_cloud(String message) override
+    {
+        cloud = message.toFloat();
+
+        if (on_change)
+            on_change();
+    }
+
+    void update_to_local() override { local = cloud; }
+    void update_to_cloud() override { cloud = local; }
+    bool different_from_cloud() override { return local != cloud; }
+    String stringify() const override { return String(local); }
+};
+
+class CloudVarBool : public CloudVarBase
+{
+public:
+    bool &local, cloud;
+
+    CloudVarBool(const String name, bool &local, Permission type = Permission::ReadWrite, callback_t on_change = []() {}) : CloudVarBase(name, type, on_change), local(local), cloud(local) {}
+
+    void update_from_cloud(String message) override
+    {
+        cloud = message.toInt();
+
+        if (on_change)
+            on_change();
+    }
+
+    void update_to_local() override { local = cloud; }
+    void update_to_cloud() override { cloud = local; }
+    bool different_from_cloud() override { return local != cloud; }
+    String stringify() const override { return String(local); }
+};

@@ -67,4 +67,9 @@ namespace net
 
         Serial.println("Connected");
     }
+
+    void loop()
+    {
+        if (!wifi.connected()) setup();
+    }
 }

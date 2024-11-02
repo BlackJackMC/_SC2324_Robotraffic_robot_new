@@ -2,7 +2,7 @@
 
 namespace traffic_controller
 {
-    std::array<CloudVar<String>, 3> traffic_light_list = {CloudVar<String>("start"), CloudVar<String>("west"), CloudVar<String>("south")};
+    std::array<String, 3> traffic_light_list;
     std::map<String, bool> decisions = {
         {"red", false},
         {"red yellow", false},

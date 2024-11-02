@@ -89,6 +89,12 @@ namespace mqtt
         Serial.println("Connected");
     }
 
+    void loop()
+    {
+        if (!client.connected()) setup();
+        client.loop();
+    }
+
     void setup()
     {
         Serial.print("[mqtt]:");

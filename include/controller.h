@@ -4,22 +4,24 @@
 #include <Arduino.h>
 #include <PID_v1.h>
 #include <map>
-#include "cloud_var.h"
 
 #include "mqtt.h"
 #include "line.h"
 #include "steering.h"
+#include "motor.h"
+#include "traffic_controller.h"
+
 namespace controller
 {  
-    extern CloudVar<int> speed;
-    extern CloudVar<int> direction;
-    extern CloudVar<float> P;
-    extern CloudVar<float> I;
-    extern CloudVar<float> D;
-    extern CloudVar<int> angle;
-    extern CloudVar<float> input;
-    extern CloudVar<float> output;
-    extern CloudVar<int> setpoint;
+    extern int speed;
+    extern int direction;
+    extern float P;
+    extern float I;
+    extern float D;
+    extern int angle;
+    extern float input;
+    extern float output;
+    extern int setpoint;
 
     void update_angle();
     void update_hall();

@@ -6,7 +6,7 @@
 
 namespace traffic_controller
 {
-    extern std::array<CloudVar<String>, 3> traffic_light_list;
+    extern std::array<String, 3> traffic_light_list;
     extern std::map<String, bool> decision;
     extern int counter;
 

@@ -14,6 +14,7 @@ namespace net
 
     void read_response();
     void printWifiStatus();
+    void loop();
     void setup();
 }
 

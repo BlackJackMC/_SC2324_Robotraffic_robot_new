@@ -26,17 +26,14 @@ void setup()
     motor::setup();
     steering::setup();
     controller::setup();
+    cloud::setup();
 }
 
 void loop()
 {
-    if (!net::wifi.connected())
-        net::setup();
-    if (!mqtt::client.connected())
-        mqtt::setup();
-
+    net::loop();
+    mqtt::loop();
     cloud::loop();
-    mqtt::client.loop();
     controller::loop();
 }
 
