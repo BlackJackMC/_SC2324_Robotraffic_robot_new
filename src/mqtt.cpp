@@ -96,8 +96,8 @@ namespace mqtt
     void setup()
     {
         Serial.print("[mqtt]:");
-        client.setStream(Serial);
-        client.setCallback(handler);
+        client.setStream(Serial)
+              .setCallback(handler);
         connect();
     }
 }

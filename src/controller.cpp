@@ -46,13 +46,13 @@ namespace controller
         pid.SetMode(AUTOMATIC);
         pid.SetOutputLimits(0, 4000);
 
-        cloud::add(P, Permission::ReadWrite, [&](){Serial.println("[pid]: " + String(P)); pid.SetTunings(P, I, D); });
-        cloud::add(I, Permission::ReadWrite, [&](){Serial.println("[pid]: " + String(I)); pid.SetTunings(P, I, D); });
-        cloud::add(D, Permission::ReadWrite, [&](){Serial.println("[pid]: " + String(D)); pid.SetTunings(P, I, D); });
-        cloud::add(input, Permission::Read);
-        cloud::add(output, Permission::Read);
-        cloud::add(speed, Permission::ReadWrite);
-        cloud::add(direction, Permission::ReadWrite);
-        cloud::add(angle, Permission::ReadWrite);
+        cloud::add(P, Permission::ReadWrite, Priority::Cloud, Update_Policy::Change, [&](){ pid.SetTunings(P, I, D); });
+        cloud::add(I, Permission::ReadWrite, Priority::Cloud, Update_Policy::Change, [&](){ pid.SetTunings(P, I, D); });
+        cloud::add(D, Permission::ReadWrite, Priority::Cloud, Update_Policy::Change, [&](){ pid.SetTunings(P, I, D); });
+        cloud::add(input, Permission::Read, Priority::Local, Update_Policy::Demand);
+        cloud::add(output, Permission::Read, Priority::Local, Update_Policy::Demand);
+        cloud::add(speed, Permission::ReadWrite, Priority::Local);
+        cloud::add(direction, Permission::ReadWrite, Priority::Cloud);
+        cloud::add(angle, Permission::ReadWrite, Priority::Cloud);
     }
 }
