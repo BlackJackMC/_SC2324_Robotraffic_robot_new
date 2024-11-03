@@ -16,6 +16,7 @@ enum class Priority
 
 enum class Update_Policy
 {
+    None, // Cant update, read-only from local
     Change, // Update if cloud and local are different
     Demand, //Update when demand
 };
@@ -83,15 +84,10 @@ public:
 
     void update_on_demand()
     {
-        // Serial.println("[cloud]: " + name + " update on demand, priority = " + String(int(priority)));
         if (priority == Priority::Cloud)
-        {
-            // Serial.println("[cloud]: " + name + " update to local");
             update_to_local();
-        }
         else
         {
-            // Serial.println("[cloud]: " + name + " update to cloud");
             update_to_cloud();
             cloud_update_callback();
         }

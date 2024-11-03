@@ -29,7 +29,8 @@ namespace traffic_controller
 
     void setup()
     {
-        for (int i = 0; i < traffic_light_list.size(); i++)
-            cloud::add(traffic_light_list[i], Permission::ReadWrite);
+        cloud::add(traffic_light_list[0], Permission::ReadWrite, Priority::Cloud, Update_Policy::None);
+        cloud::add(traffic_light_list[1], Permission::ReadWrite, Priority::Cloud, Update_Policy::None);
+        cloud::add(traffic_light_list[2], Permission::ReadWrite, Priority::Cloud, Update_Policy::None);
     }
 }
