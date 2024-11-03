@@ -34,4 +34,10 @@
 | signal | 3       |
 
 ## All topic
-
+```
+.
+└── device/
+    └── {MAC}/
+        ├── variable
+        └── event
+```
