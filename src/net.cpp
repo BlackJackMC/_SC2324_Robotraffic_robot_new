@@ -6,21 +6,6 @@ namespace net
 
     WiFiSSLClient wifi;
 
-    void read_response()
-    {
-        uint32_t received_data_num = 0;
-        while (wifi.available())
-        {
-            char c = wifi.read();
-            Serial.print(c);
-            received_data_num++;
-            if (received_data_num % 80 == 0)
-            {
-                Serial.println();
-            }
-        }
-    }
-
     void printWifiStatus()
     {
         IPAddress ip = WiFi.localIP();
@@ -60,8 +45,9 @@ namespace net
                 Serial.println(wifi.first);
                 status = WiFi.begin(wifi.first, wifi.second);
                 delay(15000);
-                if (status == WL_CONNECTED)
-                    break;
+                if (!status == WL_CONNECTED) continue;
+                printWifiStatus();    
+                break;
             }
         }
 

@@ -1,0 +1,8 @@
+{
+    "name": "SimpleCloud",
+    "dependencies": [
+        {
+            "name": "MqttClient"
+        }
+    ]
+}

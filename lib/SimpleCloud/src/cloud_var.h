@@ -1,6 +1,7 @@
 #pragma once
 
-#include "mqtt.h"
+#include <functional>
+#include <Arduino.h>
 
 enum class Permission
 {

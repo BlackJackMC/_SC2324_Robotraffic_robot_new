@@ -36,8 +36,8 @@
 ## All topic
 ```
 .
-└── device/
-    └── {MAC}/
+└── config/
+    └── {ID}/
         ├── variable
         └── event
 ```

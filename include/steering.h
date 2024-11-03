@@ -3,13 +3,9 @@
 
 #include <Arduino.h>
 #include <Servo.h>
-#include "cloud_var.h"
 
 namespace steering
 {
-    extern const int pin;
-    extern Servo servo;
-
     void setup();
     void turn(int angle);
     void shutdown();

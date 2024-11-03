@@ -46,13 +46,13 @@ namespace controller
         pid.SetMode(AUTOMATIC);
         pid.SetOutputLimits(0, 4000);
 
-        cloud::add(P, Permission::ReadWrite, Priority::Cloud, Update_Policy::Change, [&](){ pid.SetTunings(P, I, D); });
-        cloud::add(I, Permission::ReadWrite, Priority::Cloud, Update_Policy::Change, [&](){ pid.SetTunings(P, I, D); });
-        cloud::add(D, Permission::ReadWrite, Priority::Cloud, Update_Policy::Change, [&](){ pid.SetTunings(P, I, D); });
-        cloud::add(input, Permission::Read, Priority::Local, Update_Policy::Demand);
-        cloud::add(output, Permission::Read, Priority::Local, Update_Policy::Demand);
-        cloud::add(speed, Permission::ReadWrite, Priority::Local);
-        cloud::add(direction, Permission::ReadWrite, Priority::Cloud);
-        cloud::add(angle, Permission::ReadWrite, Priority::Cloud);
+        properties::simple_cloud.add(P, Permission::ReadWrite, Priority::Cloud, Update_Policy::Change, [&](){ pid.SetTunings(P, I, D); });
+        properties::simple_cloud.add(I, Permission::ReadWrite, Priority::Cloud, Update_Policy::Change, [&](){ pid.SetTunings(P, I, D); });
+        properties::simple_cloud.add(D, Permission::ReadWrite, Priority::Cloud, Update_Policy::Change, [&](){ pid.SetTunings(P, I, D); });
+        properties::simple_cloud.add(input, Permission::Read, Priority::Local, Update_Policy::Demand);
+        properties::simple_cloud.add(output, Permission::Read, Priority::Local, Update_Policy::Demand);
+        properties::simple_cloud.add(speed, Permission::ReadWrite, Priority::Local);
+        properties::simple_cloud.add(direction, Permission::ReadWrite, Priority::Cloud);
+        properties::simple_cloud.add(angle, Permission::ReadWrite, Priority::Cloud);
     }
 }

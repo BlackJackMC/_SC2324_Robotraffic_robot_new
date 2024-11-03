@@ -10,14 +10,14 @@
 #include "steering.h"
 #include "motor.h"
 #include "traffic_controller.h"
-#include "cloud.h"
+
+#include "properties.h"
 
 namespace controller
 {  
     void update_angle();
     void update_hall();
     void setup();
-    void shutdown();
     void loop();
 }
 
