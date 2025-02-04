@@ -4,7 +4,8 @@ namespace net
 {
     int status = WL_IDLE_STATUS;
 
-    WiFiSSLClient wifi;
+    // WiFiSSLClient wifi;
+    WiFiClient wifi;
 
     void printWifiStatus()
     {
@@ -35,7 +36,7 @@ namespace net
         if (WiFi.firmwareVersion() < WIFI_FIRMWARE_LATEST_VERSION)
             Serial.println("Please upgrade the firmware");
 
-        wifi.setCACert(CERTIFICATE);
+        // wifi.setCACert(CERTIFICATE);
 
         while (status != WL_CONNECTED)
         {

@@ -21,7 +21,8 @@ public:
     MqttClient& set_username(String username);
     MqttClient& set_password(String password);
     MqttClient& set_id(String id);
-    MqttClient& set_wifi_client(Client &wifi_client);
+    MqttClient& set_stream(Stream& stream);
+    MqttClient& set_wifi_client(Client& wifi_client);
 
     static void handler(char *topic, byte *buffer, unsigned int length);
     void on(String topic, callback_t f);

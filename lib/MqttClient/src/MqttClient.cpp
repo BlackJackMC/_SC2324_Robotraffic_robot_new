@@ -25,6 +25,13 @@ MqttClient& MqttClient::set_id(String id)
     this->id = id;
     return *this;
 }
+
+MqttClient& MqttClient::set_stream(Stream& stream)
+{
+    this->client.setStream(stream);
+    return *this;
+}
+
 MqttClient& MqttClient::set_wifi_client(Client &wifi_client)
 {
     client.setClient(wifi_client);

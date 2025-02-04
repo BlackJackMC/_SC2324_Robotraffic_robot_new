@@ -6,7 +6,7 @@
 
 namespace net
 {
-    extern WiFiSSLClient wifi;
+    extern WiFiClient wifi;
 
     void loop();
     void setup();
