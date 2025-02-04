@@ -37,7 +37,7 @@ namespace controller
             checkpoint_passed = false;
 
         update_angle();
-        steering::turn(angle);
+        servo::turn(angle);
         motor::go(speed, direction);
     }
 

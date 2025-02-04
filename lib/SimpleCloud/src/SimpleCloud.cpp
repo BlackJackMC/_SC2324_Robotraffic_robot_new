@@ -55,10 +55,10 @@ void Cloud::setup()
     for (const auto i : variable)
     {
         if (i->permission > Permission::Read) mqtt_client->on(get_variable_topic(i->name), [i](String message){ i->update_from_cloud(message); });
-        i->set_cloud_update_callback([i, this](){ 
+        i->set_publish_callback([i, this](){ 
             mqtt_client->publish(get_variable_topic(i->name).c_str(), i->stringify()); 
         });
-        i->cloud_update_callback(); //For debugging
+        i->publish_callback(); //For debugging
     }
 
     mqtt_client->publish(get_event_topic("variables"), "required");

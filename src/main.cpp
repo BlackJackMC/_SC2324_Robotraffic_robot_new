@@ -1,6 +1,8 @@
 #include <Arduino.h>
 #include "properties.h"
 #include "hardware.h"
+#include "traffic_controller.h"
+#include "controller.h"
 
 void setup()
 {
@@ -11,7 +13,12 @@ void setup()
     net::setup();
     mqtt::setup();
 
-    hardware::setup();
+    line::setup();
+    servo::setup();
+    hall::setup(controller::update_hall);
+    motor::setup();
+
+    traffic_controller::setup();
     controller::setup();
     properties::setup();
 }

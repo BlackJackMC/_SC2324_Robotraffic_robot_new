@@ -38,6 +38,7 @@ private:
     std::vector<std::pair<String, int>> broker_list;
     PubSubClient client;
     String username, password, id;
+    Stream* stream;
 
     void connect();
 

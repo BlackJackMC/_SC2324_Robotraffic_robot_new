@@ -6,9 +6,7 @@
 #include <map>
 
 #include "mqtt.h"
-#include "line.h"
-#include "steering.h"
-#include "motor.h"
+#include "hardware.h"
 #include "traffic_controller.h"
 
 #include "properties.h"

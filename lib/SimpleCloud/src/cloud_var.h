@@ -66,9 +66,9 @@ public:
         this->priority = priority;
         return *this;
     }
-    CloudVarBase &set_cloud_update_callback(callback_t cloud_update_callback)
+    CloudVarBase &set_publish_callback(callback_t publish_callback)
     {
-        this->cloud_update_callback = cloud_update_callback;
+        this->publish_callback = publish_callback;
         return *this;
     }
     virtual void update_from_cloud(String message) = 0;
@@ -90,7 +90,7 @@ public:
         else
         {
             update_to_cloud();
-            cloud_update_callback();
+            publish_callback();
         }
     }
 
@@ -115,7 +115,7 @@ public:
     Priority priority;
     Permission permission;
     Update_Policy update_policy;
-    callback_t on_receive, on_sync, cloud_update_callback;
+    callback_t on_receive, on_sync, publish_callback;
 
 };
 

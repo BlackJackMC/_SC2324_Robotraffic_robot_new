@@ -25,13 +25,11 @@ MqttClient& MqttClient::set_id(String id)
     this->id = id;
     return *this;
 }
-
 MqttClient& MqttClient::set_stream(Stream& stream)
 {
-    this->client.setStream(stream);
+    client.setStream(stream);
     return *this;
 }
-
 MqttClient& MqttClient::set_wifi_client(Client &wifi_client)
 {
     client.setClient(wifi_client);
@@ -39,6 +37,7 @@ MqttClient& MqttClient::set_wifi_client(Client &wifi_client)
 }
 
 
+//Listen for a topic
 void MqttClient::on(String topic, callback_t f)
 {
     auto loc = callback.find(topic);
@@ -96,15 +95,14 @@ void MqttClient::connect()
 
 void MqttClient::loop()
 {
-    if (!client.connected()) setup();
-    client.loop();
+    if (!client.loop()) setup();
 }
 
 void MqttClient::setup()
 {
     Serial.print("[mqtt]:");
-    client.setStream(Serial)
-          .setCallback(handler);
+    client.setCallback(handler);
+    client.setKeepAlive(86400);
 
     instance = this;
 
