@@ -26,7 +26,7 @@ public:
 
     static void handler(char *topic, byte *buffer, unsigned int length);
     void on(String topic, callback_t f);
-    void publish(String topic, String message);
+    void publish(String topic, String message, bool echo = true);
 
     void setup();
     void loop();

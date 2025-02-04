@@ -37,7 +37,7 @@ public:
         Update_Policy update_policy = Update_Policy::Change, 
         callback_t on_sync = []() {}, 
         callback_t on_receive = []() {}) 
-    : name(name), permission(permission), priority(priority), update_policy(update_policy), on_receive(on_receive), on_sync(on_sync) {}
+    : name(name), permission(permission), priority(priority), update_policy(update_policy), on_receive(on_receive), on_sync(on_sync), last_update(0), update_delay_time(1000) {}
 
     virtual ~CloudVarBase() = default;
 
@@ -71,6 +71,11 @@ public:
         this->publish_callback = publish_callback;
         return *this;
     }
+    CloudVarBase &set_update_delay_time(long long update_delay_time) 
+    {
+        this->update_delay_time = update_delay_time;
+        return *this;
+    }
     virtual void update_from_cloud(String message) = 0;
     virtual void update_to_cloud() = 0;
     virtual void update_to_local() = 0;
@@ -85,6 +90,9 @@ public:
 
     void update_on_demand()
     {
+        long long current_time = millis();
+        if (current_time - last_update < update_delay_time) return;
+        Serial.println(current_time - last_update);
         if (priority == Priority::Cloud)
             update_to_local();
         else
@@ -92,6 +100,8 @@ public:
             update_to_cloud();
             publish_callback();
         }
+
+        last_update = current_time;
     }
 
     void update()
@@ -116,7 +126,7 @@ public:
     Permission permission;
     Update_Policy update_policy;
     callback_t on_receive, on_sync, publish_callback;
-
+    long long last_update, update_delay_time; //In millisecond
 };
 
 class CloudVarString : public CloudVarBase

@@ -7,7 +7,7 @@ namespace servo
 
     void setup()
     {
-        Serial.print("Servo: ");
+        Serial.print("[servo]: ");
         servo.attach(pin);
         Serial.println("Done");
     }
@@ -34,7 +34,7 @@ namespace line
 
     void setup()
     {
-        Serial.print("Line sensor: ");
+        Serial.print("[line sensor]: ");
         sensor.setTypeRC();
         sensor.setSensorPins(pin, count);
         sensor.setEmitterPin(emitterPin);
@@ -57,7 +57,7 @@ namespace motor
 
     void setup()
     {
-        Serial.print("Motor: ");
+        Serial.print("[motor]: ");
         pinMode(PWMA, OUTPUT);
         pinMode(AIN1, OUTPUT);
         pinMode(AIN2, OUTPUT);

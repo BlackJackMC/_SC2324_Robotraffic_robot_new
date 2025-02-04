@@ -26,7 +26,7 @@ namespace net
     void setup()
     {
 
-        Serial.print("Network: ");
+        Serial.print("[network]: ");
         if (WiFi.status() == WL_NO_MODULE)
         {
             Serial.println("Wifi module not detected");

@@ -53,14 +53,14 @@ void MqttClient::on(String topic, callback_t f)
     }
 }
 
-void MqttClient::publish(String topic, String message)
+void MqttClient::publish(String topic, String message, bool echo)
 {
-    JsonDocument data;
-    String buffer;
-    data["id"] = id;
-    data["message"] = message;
-    serializeJson(data, buffer);
-    client.publish(topic.c_str(), buffer.c_str());
+    if (!echo)
+        client.unsubscribe(topic.c_str());
+    if (!client.publish(topic.c_str(), message.c_str()))
+        Serial.println(topic + ": Something fucked up");
+    if (!echo)
+        client.subscribe(topic.c_str());
 }
 
 void MqttClient::connect()
@@ -77,16 +77,14 @@ void MqttClient::connect()
 
         for (int i = 0; i < 5; i++) // Try to connect for 5 attempts
         {
-            if (client.connect(id.c_str(), username.c_str(), password.c_str()))
+            if (client.connect((id + "_" + String(micros())).c_str(), username.c_str(), password.c_str()))
                 break;
             else
                 Serial.print(client.state());
                 Serial.print(" ");
             delay(5000);
         }
-
-        
-
+    
         current_broker_idx = (current_broker_idx + 1) % broker_list.size();
     }
 
@@ -102,7 +100,8 @@ void MqttClient::setup()
 {
     Serial.print("[mqtt]:");
     client.setCallback(handler);
-    client.setKeepAlive(86400);
+    client.setKeepAlive(65535);
+    client.setBufferSize(512);
 
     instance = this;
 
