@@ -92,7 +92,8 @@ public:
     {
         long long current_time = millis();
         if (current_time - last_update < update_delay_time) return;
-        Serial.println(current_time - last_update);
+        // Serial.println(current_time - last_update);
+        Serial.println(name + " publish");
         if (priority == Priority::Cloud)
             update_to_local();
         else

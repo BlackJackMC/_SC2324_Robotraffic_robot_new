@@ -13,17 +13,17 @@ void setup()
     net::setup();
     mqtt::setup();
 
-    // line::setup();
-    // servo::setup();
-    // hall::setup(controller::update_hall);
-    // motor::setup();
+    line::setup();
+    servo::setup();
+    hall::setup(controller::update_hall);
+    motor::setup();
 
-    // traffic_controller::setup();
+    traffic_controller::setup();
     controller::setup();
     properties::setup();
 }
 
-void loop()
+void heartbeat()
 {
     static bool state = 0;
     static unsigned long last = 0;
@@ -32,10 +32,16 @@ void loop()
     {
         state = !state;
         last = current;
+        mqtt::mqtt_client.publish("ping", String(state));
     }
     digitalWrite(LED_BUILTIN, state);
+}
+
+void loop()
+{
     net::loop();
+    // heartbeat();
     properties::loop();
-    // controller::loop();
+    controller::loop();
 }
 
